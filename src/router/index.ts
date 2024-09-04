@@ -1,45 +1,13 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import AboutView from "@/views/AboutView.vue";
-import SettingsView from "@/views/SettingsView.vue";
-import AuthView from "@/views/AuthView.vue";
-import store from "@/vuex/store";
+import store from "@/modules/vuex/store";
+import settingsRoutes from "./routes/settings/settings.routes";
+import authRoutes from "./routes/auth/auth.routes";
+import pagesRoutes from "./routes/pages/pages.routes";
 
 const routes: Array<RouteRecordRaw> = [
-  {
-    path: "/",
-    name: "Главная",
-    meta: {
-      sidebar: true,
-      bootstrapIconClass: "bi-house-fill",
-    },
-    component: HomeView,
-  },
-  {
-    path: "/about",
-    name: "Описание",
-    meta: {
-      sidebar: true,
-      bootstrapIconClass: "bi-info-circle-fill",
-    },
-    component: AboutView,
-  },
-  {
-    path: "/settings",
-    name: "settings",
-    meta: {
-      bootstrapIconClass: "bi-gear-fill",
-    },
-    component: SettingsView,
-  },
-  {
-    path: "/auth",
-    name: "Аутентификация",
-    component: AuthView,
-    meta: {
-      bootstrapIconClass: "",
-    },
-  },
+  ...authRoutes,
+  ...pagesRoutes,
+  ...settingsRoutes
 ];
 
 const router = createRouter({

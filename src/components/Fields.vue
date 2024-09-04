@@ -16,18 +16,18 @@
   
   <script lang="ts">
   import { Options, Vue } from 'vue-class-component';
-  import { labelPropertyes } from "@/utility/interfaces/LabelPropertyes";
+  import { Label } from "@/utility/interfaces/label.interface";
   
   @Options({
     props: {
       labels: {
-        type: Array as () => labelPropertyes[],
+        type: Array as () => Label[],
         required: true,
       },
     },
   })
   export default class FieldsComponent extends Vue {
-    labels!: labelPropertyes[];
+    labels!: Label[];
     formData: Record<string, string> = {};
   
     onFieldInput(index: number) {
@@ -37,4 +37,4 @@
   </script>
   
   <style lang="scss">
-  </style>
+  </style>@/utility/interfaces/labelPropertyes.interface@/utility/interfaces/label.interface

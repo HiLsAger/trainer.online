@@ -1,4 +1,4 @@
-export interface labelPropertyes {
+export interface Label {
   title: string;
   placeholder?: string;
   type?: string;
@@ -9,12 +9,12 @@ export interface labelPropertyes {
 }
 
 export interface loginLabels {
-  login: labelPropertyes;
-  hash: labelPropertyes;
+  login: Label;
+  hash: Label;
 }
 
 export interface registerLabels {
-  login: labelPropertyes;
-  hash: labelPropertyes;
-  name: labelPropertyes;
+  login: Label;
+  hash: Label;
+  name: Label;
 }

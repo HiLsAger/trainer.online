@@ -1,4 +1,4 @@
-import { registerLabels } from "../../utility/interfaces/LabelPropertyes";
+import { registerLabels } from "../../utility/interfaces/label.interface";
 export const registerPropertyes: registerLabels = {
   login: {
     title: "Логин",

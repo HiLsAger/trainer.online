@@ -1,4 +1,4 @@
-export default interface self_intefrace {
+export default interface Self {
   token: string;
   created: string;
   life_time: number;

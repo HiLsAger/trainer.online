@@ -10,7 +10,7 @@
                 <span>{{ route.name }}</span>
             </router-link>
         </nav>
-        <router-link :to="{ name: 'settings' }" class="settings"> <!-- Отдельный router-link для "settings" -->
+        <router-link :to="{ name: 'settings' }" class="settings">
             <i :class="['bi', BootstrapIconClass(settingsRoute)]"></i>
             <span>Параметры</span>
         </router-link>

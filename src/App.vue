@@ -11,8 +11,8 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 import SidebarComponent from "./components/Sidebar.vue";
-import Toaster from "./components/Toaster.vue";
-import self_intefrace from "./utility/interfaces/SelfInterface";
+import Toaster from "./components/toaster/Toaster.vue";
+import self_intefrace from "./utility/interfaces/self.interface";
 import { useStore } from "vuex";
 
 @Options({
@@ -63,3 +63,4 @@ body {
   color: #ffc107;
 }
 </style>
+./utility/interfaces/self.interface

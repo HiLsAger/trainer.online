@@ -1,23 +1,14 @@
 import { createStore } from "vuex";
-import self_intefrace from "@/utility/interfaces/SelfInterface";
-import router from "../router/index";
-
-export interface toastsInterface {
-  type: string;
-  title: string;
-  message: string;
-  timer: number;
-  maxTimer: number;
-  show: boolean;
-}
+import Self from "@/utility/interfaces/self.interface";
+import Toasts from "@/utility/interfaces/toasts.interface";
 
 export default createStore({
   state: {
-    toasts: [] as toastsInterface[],
-    self: null as self_intefrace | null,
+    toasts: [] as Toasts[],
+    self: null as Self | null,
   },
   mutations: {
-    addToast(state, toast: toastsInterface) {
+    addToast(state, toast: Toasts) {
       toast.timer = 3000;
       toast.maxTimer = 3000;
       toast.show = true;
@@ -25,7 +16,7 @@ export default createStore({
     },
     updateToast(
       state,
-      { toast, index }: { toast: toastsInterface; index: number }
+      { toast, index }: { toast: Toasts; index: number }
     ) {
       state.toasts[index] = toast;
       if (state.toasts[index].timer <= 0) {
@@ -35,7 +26,7 @@ export default createStore({
     closeToast(state, index: number) {
       state.toasts[index].show = false;
     },
-    setSelf(state, self: self_intefrace) {
+    setSelf(state, self: Self) {
       state.self = self;
       localStorage.setItem("self", JSON.stringify(self));
     },
@@ -45,19 +36,19 @@ export default createStore({
     },
   },
   actions: {
-    addToast({ commit }, toast: toastsInterface) {
+    addToast({ commit }, toast: Toasts) {
       commit("addToast", toast);
     },
     updateToast(
       { commit },
-      payload: { toast: toastsInterface; index: number }
+      payload: { toast: Toasts; index: number }
     ) {
       commit("updateToast", payload);
     },
     closeToast({ commit }, index: number) {
       commit("closeToast", index);
     },
-    setSelf({ commit }, self: self_intefrace) {
+    setSelf({ commit }, self: Self) {
       commit("setSelf", self);
     },
     clearSelf({ commit }) {
