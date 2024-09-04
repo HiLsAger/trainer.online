@@ -6,13 +6,14 @@
 </template>
 
 <script lang="ts">
-import self_intefrace from "@/utility/interfaces/SelfInterface";
+import Self from "@/utility/interfaces/self.interface";
 import axios, { AxiosResponse } from "axios";
 import { Options, Vue } from "vue-class-component";
 import {loginPropertyes, loginInputs} from "./login.labels"
 import { useStore } from "vuex";
 import FieldsComponent from "../Fields.vue";
 import router from '../../router/index';
+import ServerHelper from "@/utility/helpers/server.helper";
 
 @Options({
   components: {
@@ -27,14 +28,17 @@ export default class LoginComponent extends Vue {
     login: "",
     hash: "",
   };
+
+  serverHelper = new ServerHelper();
+
   updateFormData(data: Record<string, string>) {
     this.login = { ...this.login, ...data };
   }
 
   onSubmit() {
     axios
-      .post("http://localhost:3000/auth/login", this.login)
-      .then((response: AxiosResponse<self_intefrace>) => {
+      .post(this.serverHelper.getApiUrl('/auth/login'), this.login)
+      .then((response: AxiosResponse<Self>) => {
         console.log(response);
         this.store.dispatch("setSelf", response.data);
         router.push('/')
@@ -47,3 +51,4 @@ export default class LoginComponent extends Vue {
 </script>
 
 <style lang="scss"></style>
+@/utility/interfaces/self.interface

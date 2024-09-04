@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { toastsInterface } from "@/vuex/store";
+import Toasts from "@/utility/interfaces/toasts.interface";
 import { Options, Vue } from "vue-class-component";
 import { useStore } from "vuex";
 import ToastComponent from "./Toast.vue";
@@ -22,7 +22,7 @@ import ToastComponent from "./Toast.vue";
 })
 export default class ToasterComponent extends Vue {
   store = useStore();
-  get toasts(): toastsInterface[] {
+  get toasts(): Toasts[] {
     return this.store.getters.toasts;
   }
 

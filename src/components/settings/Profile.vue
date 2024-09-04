@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { User } from "@/utility/interfaces/SelfInterface";
+import { User } from "@/utility/interfaces/self.interface";
 import { Vue } from "vue-class-component";
 import { useStore } from "vuex";
 
@@ -126,3 +126,4 @@ button:hover {
   }
 }
 </style>
+@/utility/interfaces/self.interface

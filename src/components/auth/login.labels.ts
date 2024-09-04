@@ -1,4 +1,4 @@
-import { loginLabels } from "../../utility/interfaces/LabelPropertyes";
+import { loginLabels } from "../../utility/interfaces/label.interface";
 export const loginPropertyes: loginLabels = {
   login: {
     title: "Логин",

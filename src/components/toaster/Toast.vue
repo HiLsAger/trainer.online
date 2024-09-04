@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import { toastsInterface } from "@/vuex/store";
+import Toasts from "@/utility/interfaces/toasts.interface";
 import { useStore } from "vuex";
 
 @Options({
@@ -30,7 +30,7 @@ export default class ToastComponent extends Vue {
   index!: number;
   store = useStore();
 
-  toast: toastsInterface = this.store.getters.toasts[this.index];
+  toast: Toasts = this.store.getters.toasts[this.index];
 
   getIconClass(type: string) {
     switch (type) {
@@ -69,3 +69,4 @@ export default class ToastComponent extends Vue {
   }
 }
 </script>
+@/modules/vuex/store

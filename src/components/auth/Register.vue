@@ -6,7 +6,8 @@
   </template>
   
   <script lang="ts">
-  import self_intefrace from "@/utility/interfaces/SelfInterface";
+  import Self from "@/utility/interfaces/self.interface";
+  import ServerHelper from "@/utility/helpers/server.helper";
   import axios, { AxiosResponse } from "axios";
   import { Options, Vue } from "vue-class-component";
   import {registerPropertyes, registerInputs} from "./register.labels"
@@ -28,6 +29,8 @@
       hash: "",
       name: ""
     };
+
+    serverHelper = new ServerHelper();
   
     updateFormData(data: Record<string, string>) {
       this.register = { ...this.register, ...data };
@@ -35,8 +38,8 @@
   
     onSubmit() {
       axios
-        .post("http://localhost:3000/auth/register", this.register)
-        .then((response: AxiosResponse<self_intefrace>) => {
+        .post(this.serverHelper.getApiUrl("auth/register"), this.register)
+        .then((response: AxiosResponse<Self>) => {
           console.log(response);
           this.store.dispatch("setSelf", response.data);
           router.push('/')
@@ -49,4 +52,4 @@
   </script>
   
   <style lang="scss"></style>
-  
+  @/utility/interfaces/self.interface
