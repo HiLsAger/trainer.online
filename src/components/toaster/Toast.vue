@@ -69,4 +69,3 @@ export default class ToastComponent extends Vue {
   }
 }
 </script>
-@/modules/vuex/store

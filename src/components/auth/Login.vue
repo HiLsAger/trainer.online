@@ -1,7 +1,8 @@
 <template>
   <div class="login-form">
-    <FieldsComponent :labels="loginPropertyes" @input="updateFormData" />
-    <button v-on:click="onSubmit()">Войти</button>
+    <h1>Вход</h1>
+    <FieldsComponent :labels="loginPropertyes" @input="handleInputUpdate" />
+    <button class="btn btn-auth" v-on:click="onSubmit()">Войти</button>
   </div>
 </template>
 
@@ -11,9 +12,9 @@ import axios, { AxiosResponse } from "axios";
 import { Options, Vue } from "vue-class-component";
 import {loginPropertyes, loginInputs} from "./login.labels"
 import { useStore } from "vuex";
-import FieldsComponent from "../Fields.vue";
-import router from '../../router/index';
-import ServerHelper from "@/utility/helpers/server.helper";
+import FieldsComponent from "@/components/fields/FieldComponent.vue";
+import router from '@/modules/router/index';
+import ServerHelper from "@/core/helpers/singletonServer.helper";
 
 @Options({
   components: {
@@ -29,15 +30,23 @@ export default class LoginComponent extends Vue {
     hash: "",
   };
 
-  serverHelper = new ServerHelper();
+  serverHelper?: ServerHelper;
 
-  updateFormData(data: Record<string, string>) {
+  async mounted() {
+    this.serverHelper = await ServerHelper.getInstance();
+  }
+
+  handleInputUpdate(data: Record<string, string>) {
     this.login = { ...this.login, ...data };
   }
 
-  onSubmit() {
+  async onSubmit() {
+    if (!this.serverHelper) {
+      throw new Error('ServerHelper is not initialized');
+    }
+
     axios
-      .post(this.serverHelper.getApiUrl('/auth/login'), this.login)
+      .post(this.serverHelper.getApiUrl('auth/login'), this.login)
       .then((response: AxiosResponse<Self>) => {
         console.log(response);
         this.store.dispatch("setSelf", response.data);
@@ -50,5 +59,5 @@ export default class LoginComponent extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
-@/utility/interfaces/self.interface
+<style lang="scss">
+</style>

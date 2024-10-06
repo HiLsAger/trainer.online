@@ -7,9 +7,10 @@ declare module '*.vue' {
 
 // Добавьте следующее
 import { ComponentCustomProperties } from 'vue';
+import Settings from './utility/interfaces/settings.interface';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
-    $config: typeof import('./configs/config.json'); // Указываем тип для $config
+    $settings: Settings; // Указываем тип для $config
   }
 }
