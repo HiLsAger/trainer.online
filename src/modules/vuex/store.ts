@@ -27,10 +27,12 @@ export default createStore({
       state.toasts[index].show = false;
     },
     setSelf(state, self: Self) {
+      console.log('setStore');
       state.self = self;
       localStorage.setItem("self", JSON.stringify(self));
     },
     clearSelf(state) {
+      console.log('remove');
       state.self = null;
       localStorage.removeItem("self");
     },

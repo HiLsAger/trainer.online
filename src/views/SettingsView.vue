@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import ProfileComponent from "../components/settings/Profile.vue";
+import ProfileComponent from "../components/profile/Profile.vue";
 
 @Options({
   components: {

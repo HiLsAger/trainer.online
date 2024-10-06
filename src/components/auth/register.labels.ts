@@ -5,18 +5,21 @@ export const registerPropertyes: registerLabels = {
     placeholder: "Логин пользователя",
     required: true,
     type: "text",
+    templateType: "text"
   },
   hash: {
     title: "Пароль",
     placeholder: "Пароль пользователя",
     required: true,
     type: "password",
+    templateType: "text"
   },
   name: {
-    title: "Логин",
-    placeholder: "Логин пользователя",
+    title: "Имя",
+    placeholder: "Имя пользователя",
     required: true,
     type: "text",
+    templateType: "text"
   },
 };
 

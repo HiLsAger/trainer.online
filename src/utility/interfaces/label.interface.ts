@@ -1,6 +1,7 @@
 export interface Label {
   title: string;
   placeholder?: string;
+  templateType: string;
   type?: string;
   required?: boolean;
   tooltip?: string;
