@@ -39,6 +39,7 @@ export default class App extends Vue {
 }
 
 body {
+  font-size: 14px;
   margin: 0;
 }
 
@@ -58,7 +59,13 @@ body {
 
   #content {
     display: flex;
+    justify-content: center;
+    padding: 0 2rem;
     flex: 1;
+
+    & > div {
+      width: 100%;
+    }
 
     .component-content {
       flex: 1;
