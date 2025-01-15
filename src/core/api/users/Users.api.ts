@@ -25,13 +25,13 @@ export default class UsersApi {
         return this.instance as UsersApi;
     }
 
-    public async getUsersList(limit: number = 10, page: number = 1): Promise<IUser | null> {
+    public async getUsersList(limit: number = 10, page: number = 1): Promise<IUser[] | null> {
         if (!this.serverHelper) {
             console.error('Не инициализирован serverHelper')
             return null;
         }
-        console.log('test')
-        const response: AxiosResponse<IUser> | null = await axios
+
+        const response: AxiosResponse<IUser[]> | null = await axios
             .get(this.serverHelper?.getApiUrl('users/user'), {
                 params: {
                     limit: limit,
@@ -40,9 +40,6 @@ export default class UsersApi {
                 headers: {
                     'Authorization': `${this.configHelper?.getSelf().token}`
                 }
-            })
-            .then((response: AxiosResponse<IUser>) => {
-                return response;
             })
             .catch((error) => {
                 console.error(error);

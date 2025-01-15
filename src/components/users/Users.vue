@@ -1,8 +1,8 @@
 <template>
   <div>
     <GridComponent
-        :table-body="api ? api.users?.getUsersList() : []"
-        :table-head="['id', 'ligin', 'name', 'status', 'role']">
+        :table-body="usersList"
+        :table-head="['Id', 'Логин', 'Имя', 'Статус профиля', 'Роль']">
     </GridComponent>
   </div>
 </template>
@@ -18,16 +18,29 @@ import ApiFacade from "@/core/api/Api.facade";
 })
 export default class UsersComponent extends Vue {
   api?: ApiFacade | null = null;
+  usersList: (string | number)[][] = [];
 
   serverHelper?: ServerHelper;
 
-  getUsers() {
-    return this.api?.users?.getUsersList();
+  async loadUsers() {
+    if (this.api && this.api.users) {
+      this.usersList = (await this.api.users.getUsersList()
+          .then(users => {
+            return users?.map(user => [
+              user.id,
+              user.login,
+              user.name,
+              user.status,
+              user.roleName
+            ])
+          })) ?? [];
+    }
   }
 
   async mounted() {
     this.serverHelper = await ServerHelper.getInstance();
     this.api = await ApiFacade.getInstance();
+    await this.loadUsers();
   }
 }
 </script>

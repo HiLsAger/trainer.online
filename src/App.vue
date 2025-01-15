@@ -34,8 +34,15 @@ export default class App extends Vue {
   --black: #1f1f1f;
   --white: #f1f1f1;
   --full-black: #000000;
+  --danger: #dc3545;
+  --success: #28a745;
+  --warning: #ffc107;
 
   --hover-color: #2d5cc0;
+
+  --table-row: #f1f1f1;
+  --table-row-even: #d1d1d1;
+  --table-row-hover: #e5faff;
 }
 
 body {
@@ -74,15 +81,15 @@ body {
 }
 
 .text-danger {
-  color: #dc3545;
+  color: var(--danger);
 }
 
 .text-success {
-  color: #28a745;
+  color: var(--success);
 }
 
 .text-warning {
-  color: #ffc107;
+  color: var(--warning);
 }
 
 .btn {

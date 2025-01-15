@@ -1,6 +1,6 @@
 <template>
   <div>
-    <table>
+    <table class="data-grid">
       <thead :class="gridOptions?.classParams.tHeadClass">
       <tr>
         <td v-for="item in tableHead">{{ item }}</td>
@@ -56,9 +56,42 @@ export default class GridComponent extends Vue {
   tableBody!: (string | number)[][];
   gridOptions!: GridOptions;
   caption!: string;
+
+  async mounted() {
+    console.log(this.tableBody)
+  }
 }
 </script>
 
 <style lang="scss">
+.data-grid {
+  width: 100%;
+  border-collapse: collapse;
 
+  thead {
+    font-weight: bold;
+  }
+
+  td {
+    padding: 5px;
+  }
+
+  tr {
+    border-bottom: 1px solid black;
+  }
+
+  tbody {
+    tr {
+      background-color: var(--table-row);
+
+      &:nth-child(even) {
+        background-color: var(--table-row-even);
+      }
+
+      &:hover {
+        background-color: var(--table-row-hover);
+      }
+    }
+  }
+}
 </style>
