@@ -10,7 +10,8 @@ const pagesRoutes: Array<RouteRecordRaw> = [
         meta: {
             sidebar: true,
             bootstrapIconClass: "bi-house-fill",
-            tooltip: 'Главная'
+            tooltip: 'Главная',
+            title: 'Главная'
         },
         component: HomeView,
     },
@@ -20,7 +21,8 @@ const pagesRoutes: Array<RouteRecordRaw> = [
         meta: {
             sidebar: true,
             bootstrapIconClass: "bi-info-circle-fill",
-            tooltip: 'Описание'
+            tooltip: 'Описание',
+            title: 'Описание'
         },
         component: AboutView,
     },
@@ -30,7 +32,8 @@ const pagesRoutes: Array<RouteRecordRaw> = [
         meta: {
             sidebar: true,
             bootstrapIconClass: "bi-people-fill",
-            tooltip: 'Пользователи'
+            tooltip: 'Пользователи',
+            title: 'Пользователи'
         },
         component: UsersView,
     }

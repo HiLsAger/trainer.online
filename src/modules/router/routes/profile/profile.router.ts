@@ -1,5 +1,8 @@
 import ProfileVue from "@/views/ProfileView.vue";
 import {RouteRecordRaw} from "vue-router";
+import ConfigHelper from "@/core/helpers/Config.helper";
+
+const configHelper = await ConfigHelper.getInstance();
 
 const profileRoutes: Array<RouteRecordRaw> = [
     {
@@ -8,17 +11,19 @@ const profileRoutes: Array<RouteRecordRaw> = [
         meta: {
             sidebar: true,
             bootstrapIconClass: "bi-person-fill",
-            tooltip: 'Профиль'
+            tooltip: 'Профиль',
+            title: 'Профиль'
         },
         component: ProfileVue,
-    },
-    {
-        path: "/profile/:username",
-        name: "Профиль",
-        meta: {
-            bootstrapIconClass: "bi-person-fill",
-        },
-        component: ProfileVue,
+        children: [
+            {
+                path: ':username',
+                component: ProfileVue,
+                meta: {
+                    title: 'Профиль'
+                }
+            },
+        ],
         props: true
     },
 ]

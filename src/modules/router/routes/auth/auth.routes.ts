@@ -9,7 +9,7 @@ const authRoutes: Array<RouteRecordRaw> = [
         name: "Аутентификация",
         component: AuthView,
         meta: {
-            bootstrapIconClass: "",
+            bootstrapIconClass: ""
         },
     },
     {

@@ -15,4 +15,4 @@ ApiFacade.getInstance();
 app.provide('$settings', settingsData as Settings)
 app.config.globalProperties.$store = store;
 app.directive('tooltip', TooltipDirective)
-app.use(router).use(store).mount("#app");
+app.use(store).use(router).mount("#app");

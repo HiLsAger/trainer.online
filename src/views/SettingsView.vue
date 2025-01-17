@@ -1,9 +1,10 @@
 <template>
-  <div><ProfileComponent /></div>
+  <div>
+  </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import {Options, Vue} from "vue-class-component";
 import ProfileComponent from "../components/profile/Profile.vue";
 
 @Options({
@@ -11,7 +12,8 @@ import ProfileComponent from "../components/profile/Profile.vue";
     ProfileComponent,
   },
 })
-export default class SettingsView extends Vue {}
+export default class SettingsView extends Vue {
+}
 </script>
 
 <style lang="scss"></style>

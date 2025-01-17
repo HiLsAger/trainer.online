@@ -2,7 +2,10 @@
   <div class="container">
     <SidebarComponent v-if="self"/>
     <div id="content">
-      <router-view/>
+      <h1>{{ $route.meta.title }}</h1>
+      <div class="page-content">
+        <router-view/>
+      </div>
     </div>
   </div>
   <Toaster/>
@@ -65,11 +68,12 @@ body {
   display: flex;
 
   #content {
-    display: flex;
-    justify-content: center;
     padding: 0 2rem;
-    flex: 1;
+    width: 100%;
+    text-align: left;
+  }
 
+  .page-content {
     & > div {
       width: 100%;
     }

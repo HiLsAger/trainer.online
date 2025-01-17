@@ -7,6 +7,7 @@ const settingsRoutes: Array<RouteRecordRaw> = [
         name: "settings",
         meta: {
             bootstrapIconClass: "bi-gear-fill",
+            title: 'Настройки'
         },
         component: SettingsView,
     },
