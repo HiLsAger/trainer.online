@@ -17,9 +17,9 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
+import {Options, Vue} from "vue-class-component";
 import Toasts from "@/utility/interfaces/toasts.interface";
-import { useStore } from "vuex";
+import {useStore} from "vuex";
 
 @Options({
   props: {
@@ -34,6 +34,7 @@ export default class ToastComponent extends Vue {
 
   getIconClass(type: string) {
     switch (type) {
+      case "error":
       case "danger":
         return "text-danger bi-exclamation-circle-fill";
       case "warning":

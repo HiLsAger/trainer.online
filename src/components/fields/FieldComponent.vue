@@ -3,8 +3,9 @@
     <div class="form-field" v-for="(label, index) in labels" :key="index">
       <component
           :is="getComponent(label)"
+          :name="index"
           :label="label"
-          @input="onFieldInput(index, $event)"
+          @handleInput="onFieldInput(index, $event)"
       />
     </div>
   </div>
@@ -15,29 +16,38 @@ import {Options, Vue} from 'vue-class-component';
 import {Component} from "vue";
 import {Label} from '@/utility/interfaces/label.interface';
 import FieldFactory from './factories/field.factory';
+import {IFieldsComponent} from "@/components/fields/IFieldsComponent.intefrace";
+import Validator from "@/components/fields/Validator";
 
 @Options({
   props: {
     labels: {
-      type: Array as () => Label[],
+      type: Object,
       required: true,
     },
   },
 })
-export default class FieldsComponent extends Vue {
-  labels!: Label[];
+export default class FieldsComponent extends Vue implements IFieldsComponent {
+  labels!: { [key: string]: Label };
   formData: Record<string, string> = {};
 
+  validator?: Validator;
+
+  validate(): boolean {
+    return !!this.validator && this.validator.validate(this.formData)
+  }
+
   getComponent(label: Label): Component | null {
-    // Получаем компонент с помощью фабрики
     return FieldFactory.getInstance().createField(label);
   }
 
-  onFieldInput(index: number, value: string) {
-    if (typeof value === 'string') {
-      this.formData[index] = value;
-      this.$emit("input", {[index]: value});
-    }
+  onFieldInput(name: string, value: string) {
+    this.formData[name] = value;
+    this.$emit("handleInput", this.formData);
+  }
+
+  mounted() {
+    this.validator = new Validator(this.labels);
   }
 }
 </script>
@@ -50,7 +60,7 @@ export default class FieldsComponent extends Vue {
     margin-top: 1rem;
 
     input {
-      background-color: var(--white);
+      background-color: transparent;
       color: var(--black);
       outline: none;
       border: none;
@@ -70,6 +80,25 @@ export default class FieldsComponent extends Vue {
     label {
       text-align: left;
       font-size: 1rem;
+    }
+
+    .validate-message {
+      margin-top: 0;
+    }
+
+    &.validate-error {
+      input {
+        border-bottom: 2px solid var(--danger);
+        color: var(--danger);
+      }
+
+      label {
+        color: var(--danger);
+      }
+
+      .validate-message {
+        color: var(--danger);
+      }
     }
   }
 }

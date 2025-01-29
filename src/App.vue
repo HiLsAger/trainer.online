@@ -35,6 +35,7 @@ export default class App extends Vue {
 <style lang="scss">
 :root {
   --black: #1f1f1f;
+  --orig-white: #fff;
   --white: #f1f1f1;
   --full-black: #000000;
   --danger: #dc3545;
@@ -64,13 +65,15 @@ body {
 .container {
   width: 100%;
   min-height: 100vh;
-  background-color: #f1f1f1;
+  background-color: var(--white);
   display: flex;
 
   #content {
     padding: 0 2rem;
     width: 100%;
     text-align: left;
+    position: relative;
+    overflow-x: hidden;
   }
 
   .page-content {
@@ -105,6 +108,13 @@ body {
   margin-top: 1rem;
 }
 
+.btn-transparent {
+  border: none;
+  width: 2rem;
+  height: 2rem;
+  font-size: 18px;
+}
+
 .btn-auth {
   margin-top: 1rem;
   font-size: 1.2rem;
@@ -114,6 +124,17 @@ body {
   &:hover {
     background-color: var(--hover-color);
     border: 2px solid var(--hover-color);
+  }
+
+  .btn-submit {
+    font-size: 1.2rem;
+    margin-left: auto;
+    width: 100%;
+
+    &:hover {
+      background-color: var(--hover-color);
+      border: 2px solid var(--hover-color);
+    }
   }
 }
 </style>

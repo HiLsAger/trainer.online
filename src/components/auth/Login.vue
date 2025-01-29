@@ -1,7 +1,7 @@
 <template>
   <div class="login-form">
     <h1>Вход</h1>
-    <FieldsComponent :labels="loginPropertyes" @input="handleInputUpdate"/>
+    <FieldsComponent :labels="loginPropertyes" @handleInput="handleInputUpdate"/>
     <button class="btn btn-auth" v-on:click="onSubmit()">Войти</button>
   </div>
 </template>
@@ -10,7 +10,7 @@
 import Self from "@/utility/interfaces/self.interface";
 import axios, {AxiosResponse} from "axios";
 import {Options, Vue} from "vue-class-component";
-import {loginInputs, loginPropertyes} from "./login.labels"
+import {loginPropertyes} from "./login.labels"
 import {useStore} from "vuex";
 import FieldsComponent from "@/components/fields/FieldComponent.vue";
 import router from '@/modules/router/index';
@@ -25,10 +25,7 @@ export default class LoginComponent extends Vue {
   store = useStore();
   loginPropertyes = loginPropertyes;
 
-  login: loginInputs = {
-    login: "",
-    hash: "",
-  };
+  login: object = {};
 
   serverHelper?: ServerHelper;
 
@@ -36,24 +33,26 @@ export default class LoginComponent extends Vue {
     this.serverHelper = await ServerHelper.getInstance();
   }
 
-  handleInputUpdate(data: Record<string, string>) {
-    this.login = {...this.login, ...data};
+  handleInputUpdate(data: object) {
+    this.login = data;
   }
 
   async onSubmit() {
     if (!this.serverHelper) {
       throw new Error('ServerHelper is not initialized');
     }
-
     axios
         .post(this.serverHelper.getApiUrl('auth/login'), this.login)
         .then((response: AxiosResponse<Self>) => {
-          console.log(response);
           this.store.dispatch("setSelf", response.data);
           router.push('/')
         })
         .catch((error) => {
-          console.log(error);
+          this.store.dispatch("addToast", {
+            type: "error",
+            title: "Ошибка",
+            message: error.response.data.message,
+          });
         });
   }
 }

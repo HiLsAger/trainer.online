@@ -10,8 +10,9 @@
       </tr>
       </thead>
       <tbody :class="gridOptions?.classParams.tBodyClass">
-      <tr v-for="row in tableBody">
-        <td v-for="item in row">{{ item }}</td>
+      <tr v-for="row in tableBody"
+          @click="onRowClick(row.actions.rowActionUrl ?? '')">
+        <td v-for="item in row.columns">{{ item }}</td>
       </tr>
       </tbody>
       <tfoot :class="gridOptions?.classParams.tFootClass"></tfoot>
@@ -25,6 +26,9 @@
 import {Options, Vue} from "vue-class-component";
 import CellFilter from "@/components/grid/interfaces/CellFilter";
 import {GridOptions} from "@/components/grid/interfaces/GridOptions";
+import {TableBody} from "@/utility/interfaces/grid.interface";
+import AxiosHelper from "@/core/helpers/Axios.helper";
+import {useStore} from "vuex";
 
 @Options({
   props: {
@@ -37,7 +41,7 @@ import {GridOptions} from "@/components/grid/interfaces/GridOptions";
       required: false
     },
     tableBody: {
-      type: Array as () => (string | number)[][],
+      type: Array as () => TableBody[],
       required: true,
     },
     gridOptions: {
@@ -57,8 +61,27 @@ export default class GridComponent extends Vue {
   gridOptions!: GridOptions;
   caption!: string;
 
+  axiosHelper?: AxiosHelper;
+  store = useStore()
+
+  async onRowClick(action: string) {
+    if (!action || !this.axiosHelper) {
+      this.store.dispatch("addToast", {
+        type: "error",
+        title: "Ошибка",
+        message: 'Произошла неизвестная ошибка',
+      });
+      return;
+    }
+
+    return this.$emit(
+        'rowActionData',
+        (await this.axiosHelper.sendGetRequest(action)) ?? null
+    );
+  }
+
   async mounted() {
-    console.log(this.tableBody)
+    this.axiosHelper = await AxiosHelper.getInstance();
   }
 }
 </script>
@@ -90,6 +113,7 @@ export default class GridComponent extends Vue {
 
       &:hover {
         background-color: var(--table-row-hover);
+        cursor: pointer;
       }
     }
   }

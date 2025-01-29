@@ -1,7 +1,8 @@
 import ServerHelper from "@/core/helpers/Server.helper";
-import {IUser} from "@/core/models/User";
-import axios, {AxiosResponse} from "axios";
+import axios from "axios";
 import ConfigHelper from "@/core/helpers/Config.helper";
+import {Grid} from "@/utility/interfaces/grid.interface";
+import {defaultUserGrid} from "@/core/models/User";
 
 export default class UsersApi {
 
@@ -25,31 +26,24 @@ export default class UsersApi {
         return this.instance as UsersApi;
     }
 
-    public async getUsersList(limit: number = 10, page: number = 1): Promise<IUser[] | null> {
+    public async getUsersGrid(limit: number = 10, page: number = 1): Promise<Grid> {
         if (!this.serverHelper) {
             console.error('Не инициализирован serverHelper')
-            return null;
+            return defaultUserGrid;
         }
-
-        const response: AxiosResponse<IUser[]> | null = await axios
-            .get(this.serverHelper?.getApiUrl('users/user'), {
-                params: {
-                    limit: limit,
-                    page: page
-                },
-                headers: {
-                    'Authorization': `${this.configHelper?.getSelf().token}`
-                }
-            })
+        
+        return await axios.get(this.serverHelper?.getApiUrl('users/grid'), {
+            params: {limit: limit, page: page},
+            headers: {'Authorization': `${this.configHelper?.getSelf().token}`}
+        })
+            .then(response => response ? response.data : defaultUserGrid)
             .catch((error) => {
                 console.error(error);
-                return null;
+                return defaultUserGrid;
             });
+    }
 
-        if (response) {
-            return response.data;
-        }
+    public async getUserForm(id: number) {
 
-        return null;
     }
 }

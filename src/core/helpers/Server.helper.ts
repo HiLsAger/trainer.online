@@ -29,7 +29,6 @@ export default class ServerHelper {
     public getApiUrl(page: string): string {
         let settings = this.configHelper?.getSettings();
         if (!settings || !settings.apiUrl) {
-            console.log('settings');
             throw new Error("Конфигурацию или apiUrl не удалось найти");
         }
 

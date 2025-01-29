@@ -75,7 +75,12 @@ export default class ProfileComponent extends Vue {
   }
 
   changeAvatar() {
-    console.log("hello world!");
+    this.isChangeProfileStatus = !this.isChangeProfileStatus;
+    this.store.dispatch("addToast", {
+      type: "success",
+      title: "Уведомление",
+      message: "Изображение изменено!",
+    });
   }
 
   async mounted() {
