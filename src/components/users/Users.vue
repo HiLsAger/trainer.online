@@ -1,5 +1,6 @@
 <template>
   <div>
+    <button class="btn btn-submit" @click="handleForm(userForm)">Добавить</button>
     <GridComponent
         :table-body="usersList.body"
         :table-head="usersList.head"
@@ -26,6 +27,7 @@ import {Grid} from "@/utility/interfaces/grid.interface";
 import {defaultUserGrid} from "@/core/models/User";
 import ModalComponent from "@/components/modal/Modal.vue";
 import {Form} from "@/utility/interfaces/label.interface";
+import userForm from "@/components/users/User.form";
 
 @Options({
   components: {ModalComponent, GridComponent}
@@ -43,6 +45,7 @@ export default class UsersComponent extends Vue {
     body: []
   };
   formChangeKey: number = 0;
+  userForm = userForm;
 
   serverHelper?: ServerHelper;
 

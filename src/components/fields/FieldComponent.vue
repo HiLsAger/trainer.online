@@ -1,6 +1,6 @@
 <template>
   <div class="form-fields">
-    <div class="form-field" v-for="(label, index) in labels" :key="index">
+    <div class="form-field" v-for="(label, index) in localLabels" :key="label.error">
       <component
           :is="getComponent(label)"
           :name="index"
@@ -29,12 +29,18 @@ import Validator from "@/components/fields/Validator";
 })
 export default class FieldsComponent extends Vue implements IFieldsComponent {
   labels!: { [key: string]: Label };
+  localLabels?: { [key: string]: Label };
   formData: Record<string, string> = {};
 
   validator?: Validator;
 
   validate(): boolean {
-    return !!this.validator && this.validator.validate(this.formData)
+    if (!!this.validator && this.localLabels) {
+      this.localLabels = {...this.validator.validate(this.localLabels)};
+      return this.validator.isValid;
+    }
+
+    return false;
   }
 
   getComponent(label: Label): Component | null {
@@ -43,11 +49,16 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
 
   onFieldInput(name: string, value: string) {
     this.formData[name] = value;
+    this.labels[name].value = value;
     this.$emit("handleInput", this.formData);
   }
 
+  created() {
+    this.localLabels = {...this.labels};
+  }
+
   mounted() {
-    this.validator = new Validator(this.labels);
+    this.validator = new Validator();
   }
 }
 </script>

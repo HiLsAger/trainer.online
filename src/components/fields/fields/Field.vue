@@ -10,7 +10,7 @@
         :value="label?.value"
         @input="handleInput"
     />
-    <div v-if="validateErrorMessage" class="validate-message"><span>{{ validateMessage }}</span></div>
+    <div v-if="label.error" class="validate-message"><span>{{ label.error }}</span></div>
   </div>
 </template>
 
@@ -24,29 +24,14 @@ import {Label} from '@/utility/interfaces/label.interface';
     name: String
   },
 })
-export default class FieldText extends Vue implements IField {
+export default class FieldText extends Vue {
   label!: Label;
   name!: string;
 
-  validateMessage: string = '';
-
-  public validate(element: HTMLInputElement): boolean {
-    if (!element.value) {
-      this.enterValidateMessage(`Значение в поле "${this.label.title}" не может быть пустым`);
-    }
-
-    return true
-  }
-
-  public enterValidateMessage(message: string): void {
-    this.validateMessage = message;
-  }
-
   public handleInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    if (this.validate(inputElement)) {
-      this.$emit("handleInput", inputElement.value);
-    }
+
+    this.$emit("handleInput", inputElement.value);
   }
 }
 </script>
