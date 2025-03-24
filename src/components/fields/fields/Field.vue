@@ -1,5 +1,5 @@
 <template>
-  <div :class="validateErrorMessage ? 'validate-error' : ''">
+  <div :class="label.error ? 'validate-error' : ''">
     <label :for="label.title">{{ label.title }}</label>
     <input
         :id="name"

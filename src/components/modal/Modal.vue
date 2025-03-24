@@ -9,8 +9,8 @@
       </div>
       <div class="modal__body">
         {{ beforeHtml }}
-        <FieldComponent ref="fieldsComponentRef" :labels="form.labels" @input="handleInputUpdate"/>
-        <button v-if="form.action" class="btn btn-submit" @click="onSubmit(form.action, form.method ?? 'POST')">
+        <FieldComponent ref="fieldsComponentRef" :labels="form.labels" @handleInputFields="handleInputUpdate"/>
+        <button v-if="form.action" class="btn btn-submit" @click="onSubmit()">
           {{ buttonSubmit }}
         </button>
         {{ afterHtml }}
@@ -78,12 +78,12 @@ export default class ModalComponent extends Vue {
   isVisible: boolean = false;
   requestData: object = {};
 
-  handleInputUpdate(data: Record<string, string>) {
-    this.requestData = {...this.requestData, ...data};
+  handleInputUpdate(data: any) {
+    this.requestData = data;
   }
 
-  onSubmit(url: string, method: string = 'POST'): void {
-    if (!url || !this.axiosHelper) {
+  async onSubmit(method: string = 'POST'): Promise<void> {
+    if (!this.form.action || !this.requestData || !this.axiosHelper) {
       this.store.dispatch("addToast", {
         type: "error",
         title: "Ошибка",
@@ -93,8 +93,18 @@ export default class ModalComponent extends Vue {
     }
 
     const fieldsComponent = this.$refs.fieldsComponentRef as IFieldsComponent;
-    if (fieldsComponent.validate()) {
+    if (!fieldsComponent.validate()) {
+      this.store.dispatch("addToast", {
+        type: "error",
+        title: "Ошибка",
+        message: 'Ошибки в введённых данных',
+      });
+      return;
     }
+
+    await this.axiosHelper.sendForm(this.form.action, this.requestData);
+    this.toggleModal();
+    this.$emit("handleSuccess");
   }
 
   toggleModal() {

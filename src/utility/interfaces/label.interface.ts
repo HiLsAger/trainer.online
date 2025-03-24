@@ -14,7 +14,7 @@ export interface Label {
     tooltip?: string;
     max?: number;
     min?: number;
-    error?: string;
+    error?: string | null
 }
 
 export interface loginLabels {

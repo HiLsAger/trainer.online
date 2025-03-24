@@ -2,6 +2,7 @@ import ServerHelper from "@/core/helpers/Server.helper";
 import ConfigHelper from "@/core/helpers/Config.helper";
 import {defaultUserGrid} from "@/core/models/User";
 import axios from "axios";
+import store from "@/modules/vuex/store";
 
 export default class AxiosHelper {
     private static instance: AxiosHelper | null = null;
@@ -31,10 +32,33 @@ export default class AxiosHelper {
         }
 
         return await axios.get(this.serverHelper?.getApiUrl(url), {
-                headers: {'Authorization': this.configHelper?.getSelf().token}
-            }
-        )
+            headers: {'Authorization': this.configHelper?.getSelf().token}
+        })
             .then(response => response ? response.data : null)
+            .catch((error) => {
+                console.error(error);
+                return null;
+            });
+    }
+
+    public async sendForm(url: string, data: Object) {
+        if (!this.serverHelper) {
+            console.error('Не инициализирован serverHelper')
+            return defaultUserGrid;
+        }
+
+        return await axios.post(this.serverHelper.getApiUrl(url), data, {
+            headers: {'Authorization': this.configHelper?.getSelf().token}
+        })
+            .then(response => {
+                store.dispatch("addToast", {
+                    type: "success",
+                    title: "Успех!",
+                    message: 'Запись успешно изменена!',
+                });
+
+                return response ? response.data : null
+            })
             .catch((error) => {
                 console.error(error);
                 return null;

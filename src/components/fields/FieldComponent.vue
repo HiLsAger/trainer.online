@@ -48,9 +48,10 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
   }
 
   onFieldInput(name: string, value: string) {
-    this.formData[name] = value;
+    this.formData[name.toLowerCase()] = value;
     this.labels[name].value = value;
-    this.$emit("handleInput", this.formData);
+    this.validate();
+    this.$emit("handleInputFields", this.formData);
   }
 
   created() {
@@ -101,6 +102,10 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
       input {
         border-bottom: 2px solid var(--danger);
         color: var(--danger);
+
+        &::placeholder {
+          color: var(--danger);
+        }
       }
 
       label {

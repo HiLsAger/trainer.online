@@ -7,14 +7,15 @@ export default class Validator {
     protected labels: { [key: string]: Label } = {};
 
     public validate(labels: { [key: string]: Label }): { [key: string]: Label } {
-        this.isValid = false;
+        this.isValid = true;
 
         this.labels = labels;
 
         Object.keys(this.labels).forEach(key => {
+            this.labels[key].error = null;
             if (!this.validateRequiredField(key)) {
                 this.labels[key].error = `Значение в поле "${this.labels[key].title}" не может быть пустым`;
-                this.isValid = true;
+                this.isValid = false;
             }
         });
 

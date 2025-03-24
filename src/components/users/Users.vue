@@ -2,6 +2,7 @@
   <div>
     <button class="btn btn-submit" @click="handleForm(userForm)">Добавить</button>
     <GridComponent
+        :key="gridScore"
         :table-body="usersList.body"
         :table-head="usersList.head"
         @rowActionData="handleForm"
@@ -13,7 +14,9 @@
           :key="formChangeKey"
           title="test"
           :form="form"
-          :show="true"/>
+          :show="true"
+          @handleSuccess="handleGridUpdate"
+      />
     </transition>
   </div>
 </template>
@@ -46,6 +49,7 @@ export default class UsersComponent extends Vue {
   };
   formChangeKey: number = 0;
   userForm = userForm;
+  gridScore = 0;
 
   serverHelper?: ServerHelper;
 
@@ -62,6 +66,12 @@ export default class UsersComponent extends Vue {
     if (this.api && this.api.users) {
       this.usersList = await this.api.users.getUsersGrid() ?? defaultUserGrid
     }
+  }
+
+  async handleGridUpdate() {
+    await this.loadUsers()
+
+    this.gridScore++;
   }
 
   async mounted() {
