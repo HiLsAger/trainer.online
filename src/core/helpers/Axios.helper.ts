@@ -25,6 +25,24 @@ export default class AxiosHelper {
         return this.instance as AxiosHelper;
     }
 
+    public async sendRequest(url: string, method: string) {
+        if (!this.serverHelper) {
+            console.error('Не инициализирован serverHelper')
+            return defaultUserGrid;
+        }
+
+        return await axios.request({
+            url: this.serverHelper?.getApiUrl(url),
+            method: method,
+            headers: {'Authorization': this.configHelper?.getSelf().token}
+        })
+            .then(response => response ? response.data : null)
+            .catch((error) => {
+                console.error(error);
+                return null;
+            });
+    }
+
     public async sendGetRequest(url: string) {
         if (!this.serverHelper) {
             console.error('Не инициализирован serverHelper')
@@ -46,7 +64,7 @@ export default class AxiosHelper {
             console.error('Не инициализирован serverHelper')
             return defaultUserGrid;
         }
-
+        console.log(data)
         return await axios.post(this.serverHelper.getApiUrl(url), data, {
             headers: {'Authorization': this.configHelper?.getSelf().token}
         })

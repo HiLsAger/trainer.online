@@ -12,7 +12,15 @@
       <tbody :class="gridOptions?.classParams.tBodyClass">
       <tr v-for="row in tableBody"
           @click="onRowClick(row.actions.rowActionUrl ?? '')">
-        <td v-for="item in row.columns">{{ item }}</td>
+        <td v-for="item in row.columns">
+          <template v-if="typeof item === 'string' || typeof item === 'number'">{{ item }}</template>
+          <template v-else-if="Array.isArray(item)">
+            <a v-for="(element, index) in item" :key="index" :href="element.url"
+               @click.prevent.stop="actionClick(element)">
+              {{ element.title }}
+            </a>
+          </template>
+        </td>
       </tr>
       </tbody>
       <tfoot :class="gridOptions?.classParams.tFootClass"></tfoot>
@@ -26,7 +34,7 @@
 import {Options, Vue} from "vue-class-component";
 import CellFilter from "@/components/grid/interfaces/CellFilter";
 import {GridOptions} from "@/components/grid/interfaces/GridOptions";
-import {TableBody} from "@/utility/interfaces/grid.interface";
+import {Action, TableBody} from "@/utility/interfaces/grid.interface";
 import AxiosHelper from "@/core/helpers/Axios.helper";
 import {useStore} from "vuex";
 
@@ -64,6 +72,17 @@ export default class GridComponent extends Vue {
   axiosHelper?: AxiosHelper;
   store = useStore()
 
+  async doAction(action: string) {
+    if (!action || !this.axiosHelper) {
+      this.store.dispatch("addToast", {
+        type: "error",
+        title: "Ошибка",
+        message: 'Произошла неизвестная ошибка',
+      });
+      return;
+    }
+  }
+
   async onRowClick(action: string) {
     if (!action || !this.axiosHelper) {
       this.store.dispatch("addToast", {
@@ -77,6 +96,17 @@ export default class GridComponent extends Vue {
     return this.$emit(
         'rowActionData',
         (await this.axiosHelper.sendGetRequest(action)) ?? null
+    );
+  }
+
+  async actionClick(action: Action) {
+    this.update(await this.axiosHelper?.sendRequest(action.url, action.method));
+  }
+
+  update(data: any) {
+    return this.$emit(
+        'rowUpdate',
+        data
     );
   }
 

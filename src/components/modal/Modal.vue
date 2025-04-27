@@ -1,15 +1,16 @@
 <template>
   <div id="right-modal" :class="['modal', isVisible ? 'show' : 'hide']">
-    <div class="modal__content">
+    <div v-if="isVisible" class="modal__content">
       <div class="modal__header">
-        <h2>{{ title }}</h2>
+        <h2 v-if="getTitle">{{ getTitle() }}</h2>
         <button @click="toggleModal()" class="modal-close btn btn-transparent">
           <i class="bi bi-x"></i>
         </button>
       </div>
       <div class="modal__body">
         {{ beforeHtml }}
-        <FieldComponent ref="fieldsComponentRef" :labels="form.labels" @handleInputFields="handleInputUpdate"/>
+        <FieldComponent :key="fieldsCounter" ref="fieldsComponentRef" :labels="form.labels"
+                        @handleInputFields="handleInputUpdate"/>
         <button v-if="form.action" class="btn btn-submit" @click="onSubmit()">
           {{ buttonSubmit }}
         </button>
@@ -35,7 +36,7 @@ import {IFieldsComponent} from "@/components/fields/IFieldsComponent.intefrace";
   props: {
     title: {
       type: String,
-      required: true
+      required: false
     },
     form: {
       type: Object as () => Form,
@@ -78,6 +79,12 @@ export default class ModalComponent extends Vue {
   isVisible: boolean = false;
   requestData: object = {};
 
+  fieldsCounter = 0;
+
+  getTitle(): string {
+    return this.title ?? this.form.title ?? null;
+  }
+
   handleInputUpdate(data: any) {
     this.requestData = data;
   }
@@ -111,11 +118,20 @@ export default class ModalComponent extends Vue {
     this.isVisible = !this.isVisible;
   }
 
+  handleClickOutside = (event: MouseEvent) => {
+    if (!this.isVisible) return;
+    const modalContent = document.getElementById('right-modal');
+    if (modalContent && !modalContent.contains(event.target as Node)) {
+      this.toggleModal();
+    }
+  }
+
   async mounted() {
     setTimeout(() => {
       this.isVisible = this.show;
     }, 0);
 
+    document.addEventListener('mousedown', this.handleClickOutside);
     this.axiosHelper = await AxiosHelper.getInstance();
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="login-form">
     <h1>Вход</h1>
-    <FieldsComponent :labels="loginPropertyes" @handleInput="handleInputUpdate"/>
+    <FieldsComponent :labels="loginPropertyes" @handleInputFields="handleInputUpdate"/>
     <button class="btn btn-auth" v-on:click="onSubmit()">Войти</button>
   </div>
 </template>

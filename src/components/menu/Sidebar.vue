@@ -72,7 +72,7 @@ export default class SidebarComponent extends Vue {
   width: 30%;
   max-width: 300px;
   min-width: 200px;
-  padding: 2em 1em;
+  padding: 3em 1em;
   background-color: var(--black);
   position: relative;
   transition: .3s;
@@ -112,7 +112,6 @@ export default class SidebarComponent extends Vue {
 
   .resize-sidebar {
     position: absolute;
-    right: 1em;
     top: 0;
     width: 3vh;
     height: 3vh;
@@ -123,10 +122,12 @@ export default class SidebarComponent extends Vue {
     color: var(--white);
     font-size: 1.5rem;
     transition: 0.3s;
-    left: 100%;
+    right: 0;
     background-color: var(--black);
     outline: none;
     z-index: 10;
+    border-bottom: 2px solid var(--white);
+    border-left: 2px solid var(--white);
   }
 
   .resize-sidebar:hover {
@@ -142,6 +143,8 @@ export default class SidebarComponent extends Vue {
 
     .nav-link, .settings {
       display: flex;
+      width: 2rem;
+      justify-content: center;
 
       i {
         margin: auto;

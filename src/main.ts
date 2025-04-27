@@ -4,8 +4,8 @@ import router from "./modules/router";
 import store from "./modules/vuex/store";
 import settingsData from "./configs/settings.json";
 import Settings from "./utility/interfaces/settings.interface";
-import TooltipDirective from "@/components/tooltip/Tooltip.vue";
 import ApiFacade from "@/core/api/Api.facade";
+import TooltipDirective from "@/components/directives/tooltip/Tooltip.vue";
 
 store.dispatch("initializeStore");
 

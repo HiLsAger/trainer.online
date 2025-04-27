@@ -1,7 +1,7 @@
 <template>
   <div class="login-form">
     <h1>Регистрация</h1>
-    <FieldsComponent :labels="loginPropertyes" @handleInput="handleInputUpdate"/>
+    <FieldsComponent :labels="loginPropertyes" @handleInputFields="handleInputUpdate"/>
     <button class="btn btn-auth" v-on:click="onSubmit()">Создать аккаунт</button>
   </div>
 </template>

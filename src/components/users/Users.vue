@@ -1,18 +1,18 @@
 <template>
   <div>
-    <button class="btn btn-submit" @click="handleForm(userForm)">Добавить</button>
+    <button class="btn btn-submit" @click="handleForm()">Добавить</button>
     <GridComponent
         :key="gridScore"
         :table-body="usersList.body"
         :table-head="usersList.head"
         @rowActionData="handleForm"
+        @rowUpdate="handleGridUpdate"
     >
     </GridComponent>
     <transition name="fade">
       <ModalComponent
           v-if="form.labels && Object.keys(form.labels).length > 0"
           :key="formChangeKey"
-          title="test"
           :form="form"
           :show="true"
           @handleSuccess="handleGridUpdate"
@@ -48,18 +48,21 @@ export default class UsersComponent extends Vue {
     body: []
   };
   formChangeKey: number = 0;
-  userForm = userForm;
   gridScore = 0;
 
   serverHelper?: ServerHelper;
 
   handleForm(form: Form | null) {
     if (!form) {
-      return;
+      form = JSON.parse(JSON.stringify(userForm)) as Form
     }
 
-    this.formChangeKey++;
+    this.reloadForm();
     this.form = form;
+  }
+
+  reloadForm() {
+    this.formChangeKey++;
   }
 
   async loadUsers() {

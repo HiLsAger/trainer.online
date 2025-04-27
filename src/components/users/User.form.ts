@@ -28,6 +28,14 @@ const userForm: Form = {
             templateType: 'text',
             title: 'Статус',
             type: 'text'
+        },
+        role_id: {
+            placeholder: 'Статус',
+            templateType: 'select',
+            list: 'fields/roles',
+            title: 'Статус',
+            type: 'text',
+
         }
     },
     action: 'users/user',
