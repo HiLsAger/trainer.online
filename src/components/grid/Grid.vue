@@ -15,19 +15,23 @@
         <td v-for="item in row.columns">
           <template v-if="typeof item === 'string' || typeof item === 'number'">{{ item }}</template>
           <template v-for="(element, index) in item" :key="index">
-            <a
-                v-if="element.icon"
-                :href="element.url"
-                @click.prevent.stop="actionClick(element)"
-                v-html="element.icon"
-                v-tooltip="element.title"
-            ></a>
-            <a
-                v-else
-                :href="element.url"
-                @click.prevent.stop="actionClick(element)"
-                v-html="element.title"
-            ></a>
+            <div class="action-links">
+              <a
+                  class="action-link icon-link"
+                  v-if="element.icon"
+                  :href="element.url"
+                  @click.prevent.stop="actionClick(element)"
+                  v-html="element.icon"
+                  v-tooltip="element.title"
+              ></a>
+              <a
+                  class="action-link"
+                  v-else
+                  :href="element.url"
+                  @click.prevent.stop="actionClick(element)"
+                  v-html="element.title"
+              ></a>
+            </div>
           </template>
         </td>
       </tr>
@@ -175,11 +179,24 @@ export default class GridComponent extends Vue {
       background-color: var(--table-row);
 
       td {
-        svg {
-          color: var(--danger);
+        .action-links {
+          display: flex;
 
-          &:hover {
-            color: var(--hover-danger);
+          .action-link {
+            display: flex;
+
+            &.icon-link {
+
+              svg {
+                color: var(--danger);
+                width: 1.2em;
+                height: 1.2em;
+
+                &:hover {
+                  color: var(--hover-danger);
+                }
+              }
+            }
           }
         }
       }
