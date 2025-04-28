@@ -105,7 +105,7 @@ button:hover {
 }
 
 .changeStatus {
-  font-size: 1rem;
+  font-size: 1em;
   padding: 0;
   background-color: transparent;
   border: none;
@@ -134,7 +134,7 @@ button:hover {
       width: 100%;
       height: 100%;
       background-color: rgba($color: #333, $alpha: 0.5);
-      font-size: 1.5rem;
+      font-size: 1.5em;
       padding: 0;
       border: none;
       outline: none;
@@ -151,16 +151,16 @@ button:hover {
   .right-content {
     flex: 1;
     text-align: left;
-    margin-left: 1rem;
+    margin-left: 1em;
 
     .profile-information {
       .prfile-name {
         margin: 0;
-        font-size: 1.5rem;
+        font-size: 1.5em;
       }
 
       .profile-status {
-        font-size: 1rem;
+        font-size: 1em;
       }
 
       .profile-status:hover {

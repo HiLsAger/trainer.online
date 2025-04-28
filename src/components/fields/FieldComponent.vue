@@ -69,7 +69,7 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
   div {
     display: flex;
     flex-direction: column;
-    margin-top: 1rem;
+    margin-top: 1em;
 
     input, select {
       background-color: transparent;
@@ -77,7 +77,7 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
       outline: none;
       border: none;
       border-bottom: 2px solid var(--black);
-      font-size: 1rem;
+      font-size: 1em;
       padding: 0;
 
       &:hover {
@@ -91,7 +91,7 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
 
     label {
       text-align: left;
-      font-size: 1rem;
+      font-size: 1em;
     }
 
     .validate-message {

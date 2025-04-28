@@ -45,7 +45,7 @@ export default class AuthView extends Vue {
   align-content: center;
 
   .form {
-    width: 20rem;
+    width: 20em;
     margin: auto;
 
     .change-state {

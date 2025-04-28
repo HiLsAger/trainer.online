@@ -162,7 +162,7 @@ export default class ModalComponent extends Vue {
   }
 
   .modal__content {
-    padding: 1rem;
+    padding: 1em;
 
     .actions {
       display: flex;

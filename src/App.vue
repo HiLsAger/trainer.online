@@ -42,6 +42,8 @@ export default class App extends Vue {
   --success: #28a745;
   --warning: #ffc107;
 
+  --hover-success: #258c3b;
+  --hover-danger: #dd1426;
   --hover-color: #2d5cc0;
 
   --table-row: #f1f1f1;
@@ -50,7 +52,7 @@ export default class App extends Vue {
 }
 
 body {
-  font-size: 14px;
+  font-size: 18px;
   margin: 0;
 }
 
@@ -69,7 +71,7 @@ body {
   display: flex;
 
   #content {
-    padding: 0 2rem;
+    padding: 0 2em;
     width: 100%;
     text-align: left;
     position: relative;
@@ -104,20 +106,20 @@ body {
   background-color: transparent;
   border: 2px solid var(--black);
   color: var(--black);
-  font-size: 1rem;
-  margin-top: 1rem;
+  font-size: 1em;
+  margin-top: 1em;
 }
 
 .btn-transparent {
   border: none;
-  width: 2rem;
-  height: 2rem;
+  width: 2em;
+  height: 2em;
   font-size: 18px;
 }
 
 .btn-auth {
-  margin-top: 1rem;
-  font-size: 1.2rem;
+  margin-top: 1em;
+  font-size: 1.2em;
   margin-left: auto;
   width: 100%;
 
@@ -127,7 +129,7 @@ body {
   }
 
   .btn-submit {
-    font-size: 1.2rem;
+    font-size: 1.2em;
     margin-left: auto;
     width: 100%;
 

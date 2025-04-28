@@ -14,11 +14,20 @@
           @click="onRowClick(row.actions.rowActionUrl ?? '')">
         <td v-for="item in row.columns">
           <template v-if="typeof item === 'string' || typeof item === 'number'">{{ item }}</template>
-          <template v-else-if="Array.isArray(item)">
-            <a v-for="(element, index) in item" :key="index" :href="element.url"
-               @click.prevent.stop="actionClick(element)">
-              {{ element.title }}
-            </a>
+          <template v-for="(element, index) in item" :key="index">
+            <a
+                v-if="element.icon"
+                :href="element.url"
+                @click.prevent.stop="actionClick(element)"
+                v-html="element.icon"
+                v-tooltip="element.title"
+            ></a>
+            <a
+                v-else
+                :href="element.url"
+                @click.prevent.stop="actionClick(element)"
+                v-html="element.title"
+            ></a>
           </template>
         </td>
       </tr>
@@ -26,6 +35,12 @@
       <tfoot :class="gridOptions?.classParams.tFootClass"></tfoot>
       <caption v-if="caption">{{ caption }}}</caption>
     </table>
+    <ConfirmModalComponent
+        :show="isShowModal"
+        :text="modalText"
+        @confirm="confirm"
+        @cancel="cancel"
+    />
   </div>
 </template>
 
@@ -37,8 +52,12 @@ import {GridOptions} from "@/components/grid/interfaces/GridOptions";
 import {Action, TableBody} from "@/utility/interfaces/grid.interface";
 import AxiosHelper from "@/core/helpers/Axios.helper";
 import {useStore} from "vuex";
+import ConfirmModalComponent from "@/components/modal/ConfirmModal.vue";
+import {useConfirmModal} from "@/components/modal/useConfirmModal";
+import {Ref} from "vue";
 
 @Options({
+  components: {ConfirmModalComponent},
   props: {
     tableHead: {
       type: Array as () => string[],
@@ -72,6 +91,20 @@ export default class GridComponent extends Vue {
   axiosHelper?: AxiosHelper;
   store = useStore()
 
+  private modal = useConfirmModal()
+
+  get isShowModal(): Ref<boolean> {
+    return this.modal.isShowModal;
+  }
+
+  get modalText(): Ref<string> {
+    return this.modal.modalText;
+  }
+
+  ask = async (text: string) => this.modal.ask(text);
+  confirm = () => this.modal.confirm();
+  cancel = () => this.modal.cancel();
+
   async doAction(action: string) {
     if (!action || !this.axiosHelper) {
       this.store.dispatch("addToast", {
@@ -100,6 +133,10 @@ export default class GridComponent extends Vue {
   }
 
   async actionClick(action: Action) {
+    if (action.confirm && !(await this.ask(action.confirm))) {
+      return;
+    }
+
     this.update(await this.axiosHelper?.sendRequest(action.url, action.method));
   }
 
@@ -136,6 +173,16 @@ export default class GridComponent extends Vue {
   tbody {
     tr {
       background-color: var(--table-row);
+
+      td {
+        svg {
+          color: var(--danger);
+
+          &:hover {
+            color: var(--hover-danger);
+          }
+        }
+      }
 
       &:nth-child(even) {
         background-color: var(--table-row-even);

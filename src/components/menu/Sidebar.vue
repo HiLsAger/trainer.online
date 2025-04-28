@@ -94,13 +94,13 @@ export default class SidebarComponent extends Vue {
       text-align: left;
       color: var(--white);
       text-decoration: none;
-      font-size: 1.5em;
+      font-size: 1.2em;
       line-height: 1.5;
       white-space: nowrap;
       transition: .3s;
 
       span {
-        margin-left: .5rem;
+        margin-left: .5em;
       }
     }
 
@@ -120,7 +120,7 @@ export default class SidebarComponent extends Vue {
     align-items: center;
     border: none;
     color: var(--white);
-    font-size: 1.5rem;
+    font-size: 1.5em;
     transition: 0.3s;
     right: 0;
     background-color: var(--black);
@@ -137,14 +137,12 @@ export default class SidebarComponent extends Vue {
   }
 
   &[aria-hidden=true] {
-    width: 2rem;
-    min-width: 2rem;
+    width: 2em;
+    min-width: 2em;
     transition: .3s;
 
     .nav-link, .settings {
       display: flex;
-      width: 2rem;
-      justify-content: center;
 
       i {
         margin: auto;

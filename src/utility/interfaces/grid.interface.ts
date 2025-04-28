@@ -17,4 +17,5 @@ export interface Action {
     title?: string | null;
     icon?: string | null;
     method: string;
+    confirm?: string;
 }

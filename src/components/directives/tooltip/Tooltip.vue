@@ -27,11 +27,11 @@ export default TooltipDirective;
     top: 0;
     left: 100%;
     max-width: 100px;
-    padding: .25rem .5rem;
+    padding: .25em .5em;
     content: attr(data-tooltip);
     color: var(--textColor, #fff);
     background: var(--backgroundColor, #000);
-    font-size: .75rem;
+    font-size: .75em;
     z-index: 9999;
   }
 
