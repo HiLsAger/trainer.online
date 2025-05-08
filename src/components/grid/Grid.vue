@@ -14,8 +14,8 @@
           @click="onRowClick(row.actions.rowActionUrl ?? '')">
         <td v-for="item in row.columns">
           <template v-if="typeof item === 'string' || typeof item === 'number'">{{ item }}</template>
-          <template v-for="(element, index) in item" :key="index">
-            <div class="action-links">
+          <div class="action-links">
+            <template v-for="(element, index) in item" :key="index">
               <a
                   class="action-link icon-link"
                   v-if="element.icon"
@@ -31,8 +31,8 @@
                   @click.prevent.stop="actionClick(element)"
                   v-html="element.title"
               ></a>
-            </div>
-          </template>
+            </template>
+          </div>
         </td>
       </tr>
       </tbody>

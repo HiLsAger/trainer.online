@@ -8,16 +8,27 @@
         </button>
       </div>
       <div class="modal__body">
-        {{ beforeHtml }}
-        <FieldComponent :key="fieldsCounter" ref="fieldsComponentRef" :labels="form.labels"
-                        @handleInputFields="handleInputUpdate"/>
+        <div v-if="beforeHtml" v-html="beforeHtml"></div>
+        <div v-if="$slots.beforeHtml">
+          <slot name="beforeHtml"></slot>
+        </div>
+        <FieldComponent
+            :key="fieldsCounter"
+            ref="fieldsComponentRef"
+            :labels="form.labels"
+            @handleInputFields="handleInputUpdate"
+        />
         <button v-if="form.action" class="btn btn-submit" @click="onSubmit()">
           {{ buttonSubmit }}
         </button>
-        {{ afterHtml }}
+        <div v-if="afterHtml" v-html="afterHtml"></div>
+        <div v-if="$slots.afterHtml">
+          <slot name="beforeHtml"></slot>
+        </div>
       </div>
-      <div class="modal__footer">
-        {{ footerHtml }}
+      <div v-if="footerHtml" v-html="footerHtml"></div>
+      <div v-if="$slots.footerHtml">
+        <slot name="beforeHtml"></slot>
       </div>
     </div>
   </div>

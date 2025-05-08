@@ -76,7 +76,7 @@ export default class ConfirmModalComponent extends Vue {
       width: 300px;
       margin: 0 auto;
       padding: 20px 30px;
-      background-color: #fff;
+      background-color: var(--white);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
       transition: all 0.3s ease;
 

@@ -36,7 +36,7 @@ export default class App extends Vue {
 :root {
   --black: #1f1f1f;
   --orig-white: #fff;
-  --white: #f1f1f1;
+  --white: #fff;
   --full-black: #000000;
   --danger: #dc3545;
   --success: #28a745;
@@ -103,11 +103,13 @@ body {
 
 .btn {
   display: block;
+  text-decoration: none;
   background-color: transparent;
   border: 2px solid var(--black);
   color: var(--black);
   font-size: 1em;
   margin-top: 1em;
+  padding: 0 0.4em;
 }
 
 .btn-transparent {

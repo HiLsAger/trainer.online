@@ -16,7 +16,11 @@
           :form="form"
           :show="true"
           @handleSuccess="handleGridUpdate"
-      />
+      >
+        <template #beforeHtml>
+          <router-link :to="`/profile/${form.labels.login.value}`" class="btn btn-submit">Показать профиль</router-link>
+        </template>
+      </ModalComponent>
     </transition>
   </div>
 </template>
