@@ -1,17 +1,21 @@
-name: Deploy to VDS
+name: Deploy Vue App
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main, develop ]
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
       - name: Install dependencies
         run: yarn install
@@ -19,15 +23,20 @@ jobs:
       - name: Build project
         run: yarn build
 
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v0.1.5
+      - name: Deploy to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "dist/"
+          target: ${{ secrets.SERVER_DEPLOY_PATH }}
+
+      - name: Restart server (опционально)
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/my_project
-            git pull origin main
-            yarn install
-            yarn build
-            pm2 restart all  # Если используете PM2 для управления процессами
+            sudo systemctl restart nginx  # Пример для Nginx
