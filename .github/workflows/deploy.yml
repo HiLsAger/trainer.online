@@ -39,4 +39,5 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo systemctl restart nginx  # Пример для Nginx
+            cd ${{ secrets.SERVER_DEPLOY_PATH }}
+            docker-compose down && docker-compose up -d

@@ -1,19 +1,23 @@
-# vue-crm
+# trainer.online frontend
 
-## Project setup
-```
-yarn install
-```
+## Конфигурация
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+По пути `src/configs/settings.json` можно настраивать различные параметры проекта
 
-### Compiles and minifies for production
-```
-yarn build
-```
+1. apiUrl - Url на бэкенд проекта `trainer.online.server`.
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Develop
+
+1. Выгрузить проект с репозитория;
+2. Скачать зависимости ``` yarn install ```;
+3. Запустить режим разработки ``` yarn serve ```;
+4. Открыть проект можно по ссылке [localhost:80](http://localhost:80).
+
+## Production
+
+1. Выгрузить проект с репозитория;
+2. Скачать зависимости ``` yarn install ```;
+3. Собрать проект ``` yarn build ```;
+4. Будет создана папка `dist`, в которой и будет находится проект для продакшена;
+5. Развернуть контейнер ``` docker-compose up ```;
+6. Открыть проект можно по ссылке [localhost:80](http://localhost:80). 
