@@ -5,15 +5,9 @@
     </button>
     <div class="sidebar-content">
       <nav>
-        <router-link
-            v-for="route in sidebarRoutes"
-            :key="route.name"
-            :to="route.path"
-            class="nav-link"
-            v-tooltip="route.meta.tooltip">
-          <i :class="[ 'bi', BootstrapIconClass(route) ]"></i>
-          <span>{{ route.name }}</span>
-        </router-link>
+        <ul>
+          <SidebarItemsComponent :routes="sidebarRoutes"/>
+        </ul>
       </nav>
       <router-link :to="{ name: 'settings' }" class="settings">
         <i :class="['bi', BootstrapIconClass(settingsRoute)]"></i>
@@ -24,15 +18,20 @@
 </template>
 
 <script lang="ts">
-import {Vue} from 'vue-class-component';
+import {Options, Vue} from 'vue-class-component';
 import {RouteLocationNormalizedLoaded, RouteRecordRaw} from 'vue-router';
+import SidebarItemsComponent from '@/components/menu/SidebarItemsComponent.vue';
 
+@Options({
+  components: {
+    SidebarItemsComponent
+  }
+})
 export default class SidebarComponent extends Vue {
   hidden = false;
 
-
   get sidebarRoutes(): RouteRecordRaw[] {
-    return this.$router.options.routes.filter(route => route.meta && route.meta.sidebar);
+    return this.$router.options.routes as RouteRecordRaw[];
   }
 
   get HideAndShowIcon() {
@@ -87,6 +86,30 @@ export default class SidebarComponent extends Vue {
     nav {
       display: flex;
       flex-direction: column;
+
+      .nav-link {
+        margin: 0;
+      }
+
+      ul {
+        padding: 0;
+        list-style: none;
+
+        li {
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+
+          a {
+            display: block;
+            width: 100%;
+          }
+        }
+
+        &.children {
+          margin-left: 1rem;
+        }
+      }
     }
 
     .settings, .nav-link {
@@ -94,10 +117,11 @@ export default class SidebarComponent extends Vue {
       text-align: left;
       color: var(--white);
       text-decoration: none;
-      font-size: 1.2em;
+      font-size: 1em;
       line-height: 1.5;
       white-space: nowrap;
       transition: .3s;
+      padding: 0 .5em;
 
       span {
         margin-left: .5em;
