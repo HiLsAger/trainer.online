@@ -1,11 +1,11 @@
 import {RouteRecordRaw} from "vue-router";
-import AuthView from "@/views/AuthView.vue";
+import EmptyView from "@/views/EmptyView.vue";
 
 const trainingsRoutes: Array<RouteRecordRaw> = [
     {
         path: "",
         name: "Тренировки",
-        component: AuthView,
+        component: EmptyView,
         meta: {
             sidebar: true,
             bootstrapIconClass: "bi bi-calendar-event-fill",
@@ -16,7 +16,7 @@ const trainingsRoutes: Array<RouteRecordRaw> = [
             {
                 path: "/training-sheet",
                 name: "Доска тренеровок",
-                component: AuthView,
+                component: EmptyView,
                 meta: {
                     sidebar: true,
                     bootstrapIconClass: "",
@@ -27,7 +27,7 @@ const trainingsRoutes: Array<RouteRecordRaw> = [
             {
                 path: "",
                 name: "Настройки тренеровок",
-                component: AuthView,
+                component: EmptyView,
                 meta: {
                     sidebar: true,
                     bootstrapIconClass: "",
@@ -38,7 +38,7 @@ const trainingsRoutes: Array<RouteRecordRaw> = [
                     {
                         path: "/trainings",
                         name: "Тренеровки",
-                        component: AuthView,
+                        component: EmptyView,
                         meta: {
                             sidebar: true,
                             bootstrapIconClass: "",
@@ -49,7 +49,7 @@ const trainingsRoutes: Array<RouteRecordRaw> = [
                     {
                         path: "/rooms",
                         name: "Залы",
-                        component: AuthView,
+                        component: EmptyView,
                         meta: {
                             sidebar: true,
                             bootstrapIconClass: "",

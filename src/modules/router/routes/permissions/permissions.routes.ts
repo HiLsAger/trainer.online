@@ -1,28 +1,39 @@
 import {RouteRecordRaw} from "vue-router";
-import ProfileVue from "@/views/ProfileView.vue";
+import EmptyView from "@/views/EmptyView.vue";
+import PermissionsView from "@/views/permissions/PermissionsView.vue";
 
 const permissionsRoutes: Array<RouteRecordRaw> = [
     {
-        path: "",
-        name: "Настройка доступов",
+        path: "/permission",
+        name: "Работа с правами",
         meta: {
             sidebar: true,
             bootstrapIconClass: "bi-lock-fill",
-            tooltip: 'Настройка доступов',
-            title: 'Настройка доступов'
+            tooltip: 'Работа с правами',
+            title: 'Работа с правами'
         },
-        component: ProfileVue,
         children: [
             {
-                path: "/users-permissions",
-                name: "Права пользователей",
+                path: "/permission/permission-list",
+                name: "Список прав",
                 meta: {
                     sidebar: true,
                     bootstrapIconClass: "",
-                    tooltip: 'Права пользователей',
-                    title: 'Права пользователей'
+                    tooltip: 'Список прав',
+                    title: 'Список прав'
                 },
-                component: ProfileVue,
+                component: PermissionsView,
+            },
+            {
+                path: "/permission/roles",
+                name: "Роли",
+                meta: {
+                    sidebar: true,
+                    bootstrapIconClass: "",
+                    tooltip: 'Роли',
+                    title: 'Роли'
+                },
+                component: EmptyView,
             },
         ]
     },
