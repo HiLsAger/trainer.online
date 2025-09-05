@@ -1,6 +1,5 @@
 <template>
   <div>
-    <button class="btn btn-submit" @click="handleForm()">Добавить</button>
     <GridComponent
         :key="gridScore"
         :table-body="itemsList.body"
