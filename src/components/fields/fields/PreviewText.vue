@@ -1,15 +1,7 @@
 <template>
   <div :class="label.error ? 'validate-error' : ''">
     <label :for="label.title">{{ label.title }}</label>
-    <input
-        :id="name"
-        :name="name"
-        :required="label.required"
-        :placeholder="label.placeholder"
-        :type="label.type"
-        :value="label?.value"
-        @input="handleInput"
-    />
+    {{ name }}
     <div v-if="label.error" class="validate-message"><span>{{ label.error }}</span></div>
   </div>
 </template>
@@ -25,7 +17,7 @@ import BaseField from "@/components/fields/fields/BaseField";
     name: String
   },
 })
-export default class FieldText extends BaseField {
+export default class PreviewText extends BaseField {
   name!: string;
 }
 </script>

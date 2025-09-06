@@ -1,7 +1,16 @@
 <template>
   <template v-for="route in routes">
     <li :key="route.name" v-if="route.meta && route.meta.sidebar">
+      <a v-if="route.children"
+         class="nav-link"
+         href="#"
+         v-tooltip="route.meta.tooltip"
+         @click.prevent="toggle(route.name)">
+        <i :class="['bi', BootstrapIconClass(route)]"></i>
+        <span>{{ route.name }}</span>
+      </a>
       <router-link
+          v-else
           :to="route.path"
           class="nav-link"
           v-tooltip="route.meta.tooltip"

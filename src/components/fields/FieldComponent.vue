@@ -15,7 +15,7 @@
 import {Options, Vue} from 'vue-class-component';
 import {Component} from "vue";
 import {Label} from '@/utility/interfaces/label.interface';
-import FieldFactory from './factories/field.factory';
+import FieldFactory from './factories/Field.factory';
 import {IFieldsComponent} from "@/components/fields/IFieldsComponent.intefrace";
 import Validator from "@/components/fields/Validator";
 
@@ -51,6 +51,7 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
     this.formData[name.toLowerCase()] = value;
     this.labels[name].value = value;
     this.validate();
+    console.log(this.formData)
     this.$emit("handleInputFields", this.formData);
   }
 

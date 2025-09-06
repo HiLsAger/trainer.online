@@ -3,8 +3,8 @@
     <button class="btn btn-submit" @click="handleForm()">Добавить</button>
     <GridComponent
         :key="gridScore"
-        :table-body="usersList.body"
-        :table-head="usersList.head"
+        :table-body="itemsList.body"
+        :table-head="itemsList.head"
         @rowActionData="handleForm"
         @rowUpdate="handleGridUpdate"
     >
@@ -17,9 +17,6 @@
           :show="true"
           @handleSuccess="handleGridUpdate"
       >
-        <template #beforeHtml>
-          <router-link :to="`/profile/${form.labels.login.value}`" class="btn btn-submit">Показать профиль</router-link>
-        </template>
       </ModalComponent>
     </transition>
   </div>
@@ -27,37 +24,37 @@
 
 <script lang="ts">
 import {Options, Vue} from "vue-class-component";
-import ServerHelper from "@/core/helpers/Server.helper";
-import GridComponent from "@/components/grid/Grid.vue";
-import ApiFacade from "@/core/api/Api.facade";
+import {Form} from "@/utility/interfaces/label.interface";
 import {Grid} from "@/utility/interfaces/grid.interface";
+import ApiFacade from "@/core/api/Api.facade";
+import ServerHelper from "@/core/helpers/Server.helper";
 import {defaultUserGrid} from "@/core/models/User";
 import ModalComponent from "@/components/modal/Modal.vue";
-import {Form} from "@/utility/interfaces/label.interface";
-import userForm from "@/core/forms/User.form";
+import GridComponent from "@/components/grid/Grid.vue";
+import roleForm from "@/core/forms/Role.form";
 
 @Options({
   components: {ModalComponent, GridComponent}
 })
-export default class UsersComponent extends Vue {
-  api?: ApiFacade | null = null;
+export default class RolesView extends Vue {
   form?: Form = {
     labels: {},
     action: '',
     method: ''
   };
-  usersList: Grid = {
+  itemsList: Grid = {
     head: [],
     body: []
   };
   formChangeKey: number = 0;
   gridScore = 0;
 
+  api?: ApiFacade | null = null;
   serverHelper?: ServerHelper;
 
   handleForm(form: Form | null) {
     if (!form) {
-      form = JSON.parse(JSON.stringify(userForm)) as Form
+      form = JSON.parse(JSON.stringify(roleForm)) as Form
     }
 
     this.reloadForm();
@@ -68,14 +65,17 @@ export default class UsersComponent extends Vue {
     this.formChangeKey++;
   }
 
-  async loadUsers() {
-    if (this.api && this.api.users) {
-      this.usersList = await this.api.users.getUsersGrid() ?? defaultUserGrid
+  async loadData() {
+    if (this.api && this.api.grids) {
+      this.itemsList = await this.api.grids.getGrid(
+          'roles/grid',
+          {limit: 10, page: 1}
+      ) ?? defaultUserGrid
     }
   }
 
   async handleGridUpdate() {
-    await this.loadUsers()
+    await this.loadData()
 
     this.gridScore++;
   }
@@ -83,14 +83,7 @@ export default class UsersComponent extends Vue {
   async mounted() {
     this.serverHelper = await ServerHelper.getInstance();
     this.api = await ApiFacade.getInstance();
-    await this.loadUsers();
+    await this.loadData();
   }
 }
 </script>
-
-<style lang="scss">
-#right-modal.fade-leave-active.fade-leave-to {
-  opacity: (0);
-  transition: opacity 0.2s linear;
-}
-</style>

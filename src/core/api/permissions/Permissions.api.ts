@@ -2,9 +2,9 @@ import {Grid} from "@/utility/interfaces/grid.interface";
 import {defaultUserGrid} from "@/core/models/User";
 import ApiFacade from "@/core/api/Api.facade";
 
-export default class UsersApi {
+export default class PermissionsApi {
 
-    protected static instance: UsersApi | null;
+    protected static instance: PermissionsApi | null;
 
     protected api: ApiFacade | null = null;
 
@@ -12,16 +12,16 @@ export default class UsersApi {
         this.api = await ApiFacade.getInstance();
     }
 
-    public static async getInstance(): Promise<UsersApi> {
-        if (!UsersApi.instance) {
-            UsersApi.instance = new UsersApi();
-            await UsersApi.instance.init();
+    public static async getInstance(): Promise<PermissionsApi> {
+        if (!PermissionsApi.instance) {
+            PermissionsApi.instance = new PermissionsApi();
+            await PermissionsApi.instance.init();
         }
 
-        return this.instance as UsersApi;
+        return this.instance as PermissionsApi;
     }
 
-    public async getUsersGrid(limit: number = 10, page: number = 1): Promise<Grid> {
+    public async getPermissionsGrid(limit: number = 10, page: number = 1): Promise<Grid> {
         if (!this.api) {
             console.error('Не инициализирован ApiFacade')
             return defaultUserGrid;
@@ -33,12 +33,8 @@ export default class UsersApi {
         }
 
         return this.api.grids.getGrid(
-            'users/grid',
+            'permissions/grid',
             {limit: limit, page: page}
         );
-    }
-
-    public async getUserForm(id: number) {
-
     }
 }
