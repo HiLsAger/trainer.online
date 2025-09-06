@@ -8,6 +8,7 @@ export interface Form {
 export interface Label {
     title: string;
     value?: string | number | boolean;
+    values?: string[] | number[]
     placeholder?: string;
     templateType: string;
     type?: string;

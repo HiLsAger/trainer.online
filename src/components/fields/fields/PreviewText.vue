@@ -7,8 +7,9 @@
 </template>
 
 <script lang="ts">
-import {Options, Vue} from 'vue-class-component';
+import {Options} from 'vue-class-component';
 import {Label} from '@/utility/interfaces/label.interface';
+import BaseField from "@/components/fields/fields/BaseField";
 
 @Options({
   props: {
@@ -16,14 +17,7 @@ import {Label} from '@/utility/interfaces/label.interface';
     name: String
   },
 })
-export default class PreviewText extends Vue {
-  label!: Label;
+export default class PreviewText extends BaseField {
   name!: string;
-
-  public handleInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    this.$emit("handleInput", inputElement.value);
-  }
 }
 </script>

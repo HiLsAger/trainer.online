@@ -1,6 +1,6 @@
 import {RouteRecordRaw} from "vue-router";
-import EmptyView from "@/views/EmptyView.vue";
 import PermissionsView from "@/views/permissions/PermissionsView.vue";
+import RolesView from "@/views/permissions/RolesView.vue";
 
 const permissionsRoutes: Array<RouteRecordRaw> = [
     {
@@ -33,7 +33,7 @@ const permissionsRoutes: Array<RouteRecordRaw> = [
                     tooltip: 'Роли',
                     title: 'Роли'
                 },
-                component: EmptyView,
+                component: RolesView,
             },
         ]
     },

@@ -30,7 +30,7 @@ import {Form} from "@/utility/interfaces/label.interface";
 import {Grid} from "@/utility/interfaces/grid.interface";
 import ServerHelper from "@/core/helpers/Server.helper";
 import {defaultUserGrid} from "@/core/models/User";
-import userForm from "@/components/users/User.form";
+import userForm from "@/core/forms/User.form";
 
 @Options({
   components: {ModalComponent, GridComponent}

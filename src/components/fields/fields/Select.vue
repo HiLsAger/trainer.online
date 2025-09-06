@@ -9,9 +9,10 @@
 </template>
 
 <script lang="ts">
-import {Options, Vue} from 'vue-class-component';
+import {Options} from 'vue-class-component';
 import {Label} from '@/utility/interfaces/label.interface';
 import AxiosHelper from "@/core/helpers/Axios.helper";
+import BaseField from "@/components/fields/fields/BaseField";
 
 @Options({
   props: {
@@ -19,18 +20,11 @@ import AxiosHelper from "@/core/helpers/Axios.helper";
     name: String
   },
 })
-export default class SelectRole extends Vue {
-  label!: Label;
+export default class Select extends BaseField {
   name!: string;
   list?: object = {};
 
   axiosHelper?: AxiosHelper;
-
-  public handleInput(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    this.$emit("handleInput", inputElement.value);
-  }
 
   async mounted() {
     this.axiosHelper = await AxiosHelper.getInstance();
@@ -40,6 +34,8 @@ export default class SelectRole extends Vue {
     } else if (Array.isArray(this.label?.list)) {
       this.list = this.label.list;
     }
+
+    super.mounted()
   }
 }
 </script>
