@@ -50,7 +50,6 @@ export default class MultiSelectAdvanced extends Vue {
   axiosHelper?: AxiosHelper;
 
   public handleInput(): void {
-    console.log(Object.keys(this.columns.right))
     this.$emit("handleInput", Object.keys(this.columns.right));
   }
 

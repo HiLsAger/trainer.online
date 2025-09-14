@@ -157,6 +157,7 @@ export default class ModalComponent extends Vue {
   width: 35%;
   opacity: 1;
   background-color: var(--orig-white);
+  box-shadow: -0px 0px 10px -3px var(--black);
 
   .modal__header {
     display: flex;

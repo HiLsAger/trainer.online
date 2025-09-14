@@ -1,11 +1,11 @@
 import {RouteRecordRaw} from "vue-router";
 import EmptyView from "@/views/EmptyView.vue";
+import TrainingsView from "@/views/trainings/TrainingsView.vue";
 
 const trainingsRoutes: Array<RouteRecordRaw> = [
     {
-        path: "",
+        path: "/trainings",
         name: "Тренировки",
-        component: EmptyView,
         meta: {
             sidebar: true,
             bootstrapIconClass: "bi bi-calendar-event-fill",
@@ -25,40 +25,27 @@ const trainingsRoutes: Array<RouteRecordRaw> = [
                 },
             },
             {
-                path: "",
-                name: "Настройки тренеровок",
+                path: "/trainings",
+                name: "Список тренеровок",
+                component: TrainingsView,
+                meta: {
+                    sidebar: true,
+                    bootstrapIconClass: "",
+                    tooltip: 'Список тренеровок11',
+                    title: 'Список тренеровок'
+                },
+            },
+            {
+                path: "/rooms",
+                name: "Залы",
                 component: EmptyView,
                 meta: {
                     sidebar: true,
                     bootstrapIconClass: "",
-                    tooltip: 'Настройки тренеровок',
-                    title: 'Настройки тренеровок'
+                    tooltip: 'Залы',
+                    title: 'Залы'
                 },
-                children: [
-                    {
-                        path: "/trainings",
-                        name: "Тренеровки",
-                        component: EmptyView,
-                        meta: {
-                            sidebar: true,
-                            bootstrapIconClass: "",
-                            tooltip: 'Тренеровки',
-                            title: 'Тренеровки'
-                        },
-                    },
-                    {
-                        path: "/rooms",
-                        name: "Залы",
-                        component: EmptyView,
-                        meta: {
-                            sidebar: true,
-                            bootstrapIconClass: "",
-                            tooltip: 'Залы',
-                            title: 'Залы'
-                        },
-                    },
-                ]
-            }
+            },
         ]
     },
 ];

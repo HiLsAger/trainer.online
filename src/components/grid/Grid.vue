@@ -13,7 +13,10 @@
       <tr v-for="row in tableBody"
           @click="onRowClick(row.actions.rowActionUrl ?? '')">
         <td v-for="item in row.columns">
-          <template v-if="typeof item === 'string' || typeof item === 'number'">{{ item }}</template>
+          <template v-if="typeof item === 'string' || typeof item === 'number'">
+            <span v-if="isHtml(item)" v-html="item"></span>
+            <span v-else>{{ item }}</span>
+          </template>
           <div class="action-links">
             <template v-for="(element, index) in item" :key="index">
               <a
@@ -103,6 +106,10 @@ export default class GridComponent extends Vue {
 
   get modalText(): Ref<string> {
     return this.modal.modalText;
+  }
+
+  isHtml(value: string | number): boolean {
+    return typeof value === 'string' && /<[a-z][\s\S]*>/i.test(value);
   }
 
   ask = async (text: string) => this.modal.ask(text);

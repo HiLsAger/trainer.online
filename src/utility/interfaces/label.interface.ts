@@ -17,6 +17,7 @@ export interface Label {
     list?: string | object;
     max?: number;
     min?: number;
+    size?: number;
     error?: string | null
 }
 
