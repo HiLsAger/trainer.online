@@ -140,5 +140,9 @@ body {
       border: 2px solid var(--hover-color);
     }
   }
+
+  .disabled {
+    display: none;
+  }
 }
 </style>

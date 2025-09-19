@@ -1,4 +1,4 @@
-import {Form} from "@/utility/interfaces/label.interface";
+import {Flags, Form} from "@/utility/interfaces/label.interface";
 
 const trainingForm: Form = {
     labels: {
@@ -14,6 +14,14 @@ const trainingForm: Form = {
             placeholder: "Описание",
             type: "text",
             templateType: 'text'
+        },
+        style_id: {
+            placeholder: 'Стили',
+            templateType: 'selectAdvanced',
+            list: 'fields/styles',
+            title: 'Стили',
+            type: 'text',
+            flags: [Flags.AS_HTML]
         }
     },
     action: 'trainings/training',

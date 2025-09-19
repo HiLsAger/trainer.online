@@ -6,6 +6,7 @@ import PreviewText from "@/components/fields/fields/PreviewText.vue";
 import MultiSelectAdvanced from "@/components/fields/fields/MultiSelectAdvanced.vue";
 import ColorPickerField from "@/components/fields/fields/ColorPickerField.vue";
 import TextArea from "@/components/fields/fields/TextArea.vue";
+import SelectAdvanced from "@/components/fields/fields/SelectAdvanced.vue";
 
 export default class FieldFactory {
     private static instance: FieldFactory | null = null;
@@ -22,10 +23,12 @@ export default class FieldFactory {
         switch (label.templateType) {
             case 'text':
                 return FieldText;
-            case 'select':
-                return Select;
             case 'previewText':
                 return PreviewText;
+            case 'select':
+                return Select;
+            case 'selectAdvanced':
+                return SelectAdvanced
             case 'multiSelectAdvanced':
                 return MultiSelectAdvanced;
             case 'colorPicker':

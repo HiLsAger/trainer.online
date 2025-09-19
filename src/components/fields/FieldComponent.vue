@@ -72,7 +72,7 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
     flex-direction: column;
     margin-top: 1em;
 
-    input, select, textarea {
+    input, select, textarea, .custom-field {
       background-color: transparent;
       color: var(--black);
       outline: none;
