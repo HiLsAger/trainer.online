@@ -15,6 +15,12 @@ const trainingForm: Form = {
             type: "text",
             templateType: 'text'
         },
+        trainer_id: {
+            placeholder: "Тренер",
+            templateType: "select",
+            list: "fields/trainers",
+            title: "Тренер",
+        },
         style_id: {
             placeholder: 'Стили',
             templateType: 'selectAdvanced',

@@ -31,7 +31,7 @@ export default class Select extends BaseField {
 
     if (typeof this.label.list === 'string') {
       this.list = await this.axiosHelper.sendGetRequest(this.label.list)
-    } else if (Array.isArray(this.label?.list)) {
+    } else if (typeof this.label?.list === 'object') {
       this.list = this.label.list;
     }
 
