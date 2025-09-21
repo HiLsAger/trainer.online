@@ -2,6 +2,9 @@
   <div class="container">
     <SidebarComponent v-if="self"/>
     <div id="content">
+      <div class="header-sidebar-container">
+        <HeaderSidebar/>
+      </div>
       <h1>{{ $route.meta.title }}</h1>
       <div class="page-content">
         <router-view/>
@@ -17,11 +20,13 @@ import SidebarComponent from "./components/menu/Sidebar.vue";
 import Toaster from "./components/toaster/Toaster.vue";
 import self_intefrace from "./utility/interfaces/self.interface";
 import {useStore} from "vuex";
+import HeaderSidebar from "@/components/menu/HeaderSidebar.vue";
 
 @Options({
   components: {
     SidebarComponent,
-    Toaster
+    Toaster,
+    HeaderSidebar
   },
 })
 export default class App extends Vue {
@@ -71,11 +76,15 @@ body {
   display: flex;
 
   #content {
-    padding: 0 2em;
     width: 100%;
+    padding: 0 2em;
     text-align: left;
     position: relative;
     overflow-x: hidden;
+
+    .header-sidebar-container {
+      margin: 0 -2em;
+    }
   }
 
   .page-content {

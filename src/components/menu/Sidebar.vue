@@ -150,8 +150,6 @@ export default class SidebarComponent extends Vue {
     background-color: var(--black);
     outline: none;
     z-index: 10;
-    border-bottom: 2px solid var(--white);
-    border-left: 2px solid var(--white);
   }
 
   .resize-sidebar:hover {

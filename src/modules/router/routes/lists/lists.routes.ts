@@ -7,7 +7,7 @@ const stylesRoutes: Array<RouteRecordRaw> = [
         name: "Справочники",
         meta: {
             sidebar: true,
-            bootstrapIconClass: "bi bi-calendar-event-fill",
+            bootstrapIconClass: "bi bi-archive-fill",
             tooltip: 'Справочники',
             title: 'Справочники'
         },

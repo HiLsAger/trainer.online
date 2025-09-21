@@ -11,13 +11,21 @@
         </div>
       </div>
       <div class="row">
+        <div class="left-search multiselect-column-search">
+          <div class="row">
+            <label for="search">Поиск</label>
+            <input id="search" autocomplete="off" @input="setSearchText">
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="left-column column">
-          <div v-for="(name, id) in columns.left">
+          <div v-for="(name, id) in visibleColumns.left">
             <button v-on:click="move(id, 'right')">{{ name }}</button>
           </div>
         </div>
         <div class="right-column column">
-          <div v-for="(name, id) in columns.right">
+          <div v-for="(name, id) in visibleColumns.right">
             <button v-on:click="move(id, 'left')">{{ name }}</button>
           </div>
         </div>
@@ -47,6 +55,13 @@ export default class MultiSelectAdvanced extends Vue {
     right: {},
   }
 
+  visibleColumns: MultiSelectColumnsInterface = {
+    left: {},
+    right: {},
+  }
+
+  searchText = '';
+
   axiosHelper?: AxiosHelper;
 
   public handleInput(): void {
@@ -66,6 +81,32 @@ export default class MultiSelectAdvanced extends Vue {
     }
 
     this.handleInput()
+    this.search()
+  }
+
+  public setSearchText(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    this.searchText = target.value
+
+    this.search()
+  }
+
+  public search(): void {
+    this.visibleColumns = JSON.parse(JSON.stringify(this.columns)) as MultiSelectColumnsInterface;
+
+    this.visibleColumns.left = this.findItemsInIObject(this.visibleColumns.left, this.searchText);
+    this.visibleColumns.right = this.findItemsInIObject(this.visibleColumns.right, this.searchText);
+  }
+
+  protected findItemsInIObject(
+      object: Record<number | string, string>,
+      searchText: string
+  ): Record<number | string, string> {
+    return Object.fromEntries(
+        Object
+            .entries(object)
+            .filter(([_, value]) => value.toLowerCase().includes(searchText))
+    ) as Record<number | string, string>
   }
 
   public selectAll(): void {
@@ -106,6 +147,8 @@ export default class MultiSelectAdvanced extends Vue {
       }
     }
 
+    this.visibleColumns = JSON.parse(JSON.stringify(this.columns)) as MultiSelectColumnsInterface;
+
     this.handleInput()
   }
 }
@@ -116,6 +159,7 @@ export default class MultiSelectAdvanced extends Vue {
   .multi-select-advanced {
     border: 2px solid var(--black);
     margin-top: 0;
+    max-height: 300px;
 
     .row {
       display: flex;
@@ -139,6 +183,23 @@ export default class MultiSelectAdvanced extends Vue {
       .column {
         width: 45%;
         font-size: .1rem;
+        max-height: 150px;
+        overflow: scroll;
+        overflow-x: hidden;
+        padding: .25rem;
+      }
+    }
+
+    .multiselect-column-search {
+      width: 100%;
+      margin: 0;
+
+      label {
+        margin-right: .5rem;
+      }
+
+      input {
+        width: 100%;
       }
     }
 
