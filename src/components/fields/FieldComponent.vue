@@ -51,7 +51,6 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
     this.formData[name.toLowerCase()] = value;
     this.labels[name].value = value;
     this.validate();
-    console.log(this.formData)
     this.$emit("handleInputFields", this.formData);
   }
 

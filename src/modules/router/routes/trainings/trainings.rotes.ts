@@ -1,7 +1,7 @@
 import {RouteRecordRaw} from "vue-router";
-import EmptyView from "@/views/EmptyView.vue";
 import TrainingsView from "@/views/trainings/TrainingsView.vue";
 import RoomsView from "@/views/trainings/RoomsView.vue";
+import TrainingSheetView from "@/views/permissions/TrainingSheetView.vue";
 
 const trainingsRoutes: Array<RouteRecordRaw> = [
     {
@@ -17,7 +17,7 @@ const trainingsRoutes: Array<RouteRecordRaw> = [
             {
                 path: "/training-sheet",
                 name: "Доска тренеровок",
-                component: EmptyView,
+                component: TrainingSheetView,
                 meta: {
                     sidebar: true,
                     bootstrapIconClass: "",

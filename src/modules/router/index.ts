@@ -13,9 +13,9 @@ const routes: Array<RouteRecordRaw> = [
     ...pagesRoutes,
     ...permissionsRoutes,
     ...profileRoutes,
-    ...settingsRoutes,
     ...trainingsRoutes,
     ...stylesRoutes,
+    ...settingsRoutes,
 ];
 
 const router = createRouter({

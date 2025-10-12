@@ -14,7 +14,7 @@ const authRoutes: Array<RouteRecordRaw> = [
     },
     {
         path: "/logout",
-        name: "Выйти из аккаунта",
+        name: "logout",
         beforeEnter(to, from, next) {
             var authService = new AuthService();
             authService.logout();
@@ -22,7 +22,6 @@ const authRoutes: Array<RouteRecordRaw> = [
         },
         component: EmptyView,
         meta: {
-            sidebar: true,
             bootstrapIconClass: "bi-door-open-fill",
             tooltip: 'Выйти из аккаунта'
         },
