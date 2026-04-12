@@ -4,14 +4,9 @@ import ToasterStorage from "@/core/storages/toaster.storage";
 export default class ToasterHelper {
     protected static instance: ToasterHelper | null = null;
 
-
-    protected async init(): Promise<void> {
-    }
-
-    public static async getInstance(): Promise<ToasterHelper> {
+    public static getInstance(): ToasterHelper {
         if (!ToasterHelper.instance) {
             ToasterHelper.instance = new ToasterHelper();
-            await ToasterHelper.instance.init();
         }
 
         return this.instance as ToasterHelper;
@@ -25,11 +20,11 @@ export default class ToasterHelper {
         });
     }
 
-    public addErrorToast(title: string, message: string): void {
-        this.addToast(ToasterStorage.TYPE_ERROR, title, message);
+    public addErrorToast(message: string): void {
+        this.addToast(ToasterStorage.TYPE_ERROR, "Ошибка!", message);
     }
 
     public addSuccessToast(title: string, message: string): void {
-        this.addToast(ToasterStorage.TYPE_SUCCESS, title, message);
+        this.addToast(ToasterStorage.TYPE_SUCCESS, "Успех!", message);
     }
 }

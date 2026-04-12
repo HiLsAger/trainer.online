@@ -1,5 +1,5 @@
 <template>
-  <div :class="label.error ? 'validate-error' : ''">
+  <div :class="[label.error ? 'validate-error' : '', label?.type === 'checkbox' ? 'row' : '']">
     <label :for="label.title">{{ label.title }}</label>
     <input
         :id="name"
@@ -22,10 +22,10 @@ import BaseField from "@/components/fields/fields/BaseField";
 @Options({
   props: {
     label: Object as () => Label,
-    name: String
+    name: String,
+    alias: String,
   },
 })
 export default class FieldText extends BaseField {
-  name!: string;
 }
 </script>

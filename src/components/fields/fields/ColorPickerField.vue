@@ -64,11 +64,10 @@ import BaseField from "@/components/fields/fields/BaseField";
 @Options({
   props: {
     label: Object as () => Label,
-    name: String
+    name: String,
   },
 })
 export default class ColorPickerField extends BaseField {
-  name!: string;
   isShowPicker = false;
   currentColor: string = "#000000";
 

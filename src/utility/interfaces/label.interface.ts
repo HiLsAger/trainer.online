@@ -1,4 +1,5 @@
 export interface Form {
+    alias?: string;
     title?: string;
     labels: { [key: string]: Label };
     action?: string;
@@ -19,7 +20,9 @@ export interface Label {
     min?: number;
     size?: number;
     error?: string | null;
-    flags?: Flags[]
+    flags?: Flags[];
+    options?: Options;
+    hidden?: boolean
 }
 
 export enum Flags {
@@ -35,4 +38,9 @@ export interface registerLabels {
     login: Label;
     hash: Label;
     name: Label;
+}
+
+export interface Options {
+    mask?: string;
+    startStep?: string;
 }

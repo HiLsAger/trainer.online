@@ -1,7 +1,7 @@
 import {RouteRecordRaw} from "vue-router";
 import TrainingsView from "@/views/trainings/TrainingsView.vue";
 import RoomsView from "@/views/trainings/RoomsView.vue";
-import TrainingSheetView from "@/views/permissions/TrainingSheetView.vue";
+import TrainingSheetView from "@/views/trainings/TrainingSheetView.vue";
 
 const trainingsRoutes: Array<RouteRecordRaw> = [
     {

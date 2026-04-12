@@ -42,12 +42,12 @@ import AxiosHelper from "@/core/helpers/Axios.helper";
 @Options({
   props: {
     label: Object as () => Label,
-    name: String
+    name: String,
+    alias: String,
   },
 })
 export default class MultiSelectAdvanced extends Vue {
   label!: Label;
-  name!: string;
   list?: object = {};
 
   columns: MultiSelectColumnsInterface = {

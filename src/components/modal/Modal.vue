@@ -41,6 +41,7 @@ import {Form} from "@/utility/interfaces/label.interface";
 import AxiosHelper from "@/core/helpers/Axios.helper";
 import {useStore} from "vuex";
 import {IFieldsComponent} from "@/components/fields/IFieldsComponent.intefrace";
+import ToasterHelper from "@/core/helpers/Toaster.helper";
 
 @Options({
   components: {FieldComponent},
@@ -85,6 +86,7 @@ export default class ModalComponent extends Vue {
   buttonSubmit!: string;
 
   axiosHelper?: AxiosHelper;
+  toasterHelper!: ToasterHelper;
   store = useStore()
 
   isVisible: boolean = false;
@@ -92,31 +94,29 @@ export default class ModalComponent extends Vue {
 
   fieldsCounter = 0;
 
-  getTitle(): string {
+  created() {
+    this.toasterHelper = ToasterHelper.getInstance();
+  }
+
+  protected getTitle(): string {
     return this.title ?? this.form.title ?? null;
   }
 
-  handleInputUpdate(data: any) {
+  protected handleInputUpdate(data: any) {
     this.requestData = data;
+
+    this.$emit("handleInputUpdate", this.requestData);
   }
 
-  async onSubmit(method: string = 'POST'): Promise<void> {
+  protected async onSubmit(method: string = 'POST'): Promise<void> {
     if (!this.form.action || !this.requestData || !this.axiosHelper) {
-      this.store.dispatch("addToast", {
-        type: "error",
-        title: "Ошибка",
-        message: 'Произошла неизвестная ошибка',
-      });
+      this.toasterHelper.addErrorToast('Произошла неизвестная ошибка')
       return;
     }
 
     const fieldsComponent = this.$refs.fieldsComponentRef as IFieldsComponent;
     if (!fieldsComponent.validate()) {
-      this.store.dispatch("addToast", {
-        type: "error",
-        title: "Ошибка",
-        message: 'Ошибки в введённых данных',
-      });
+      this.toasterHelper.addErrorToast('Ошибки в введённых данных')
       return;
     }
 
@@ -125,11 +125,11 @@ export default class ModalComponent extends Vue {
     this.$emit("handleSuccess");
   }
 
-  toggleModal() {
+  protected toggleModal() {
     this.isVisible = !this.isVisible;
   }
 
-  handleClickOutside = (event: MouseEvent) => {
+  protected handleClickOutside = (event: MouseEvent) => {
     if (!this.isVisible) return;
     const modalContent = document.getElementById('right-modal');
     if (modalContent && !modalContent.contains(event.target as Node)) {

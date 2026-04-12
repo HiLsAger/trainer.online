@@ -18,7 +18,7 @@
 import {Options, Vue} from "vue-class-component";
 import SidebarComponent from "./components/menu/Sidebar.vue";
 import Toaster from "./components/toaster/Toaster.vue";
-import self_intefrace from "./utility/interfaces/self.interface";
+import self_interface from "./utility/interfaces/self.interface";
 import {useStore} from "vuex";
 import HeaderSidebar from "@/components/menu/HeaderSidebar.vue";
 
@@ -32,7 +32,7 @@ import HeaderSidebar from "@/components/menu/HeaderSidebar.vue";
 export default class App extends Vue {
   store = useStore();
 
-  get self(): self_intefrace | null {
+  get self(): self_interface | null {
     return this.store.getters.self;
   }
 }
@@ -54,6 +54,8 @@ export default class App extends Vue {
   --table-row: #f1f1f1;
   --table-row-even: #d1d1d1;
   --table-row-hover: #e5faff;
+
+  --gray: #6c757d;
 }
 
 body {
@@ -119,6 +121,11 @@ body {
   font-size: 1em;
   margin-top: 1em;
   padding: 0 0.4em;
+
+  &.active {
+    background-color: var(--black);
+    color: var(--white);
+  }
 }
 
 .btn-transparent {

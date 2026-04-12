@@ -94,16 +94,13 @@ export default class AxiosHelper {
                 if (!error.response) {
                     return null
                 }
-                
+
                 if (error.response.data) {
-                    this.toasterHelper.addErrorToast(
-                        "Ошибка!",
-                        (error.response.data as ErrorMessageInterface).message
-                    );
+                    this.toasterHelper.addErrorToast((error.response.data as ErrorMessageInterface).message);
                     return null
                 }
 
-                this.toasterHelper.addErrorToast("Ошибка!", error.response.statusText);
+                this.toasterHelper.addErrorToast(error.response.statusText);
                 return null;
             });
     }

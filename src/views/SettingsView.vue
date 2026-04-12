@@ -11,6 +11,7 @@
         :key="fieldsCounter"
         ref="fieldsComponentRef"
         :labels="form.labels"
+        :isHorizontal="true"
         @handleInputFields="handleInputUpdate"
     />
     <button v-if="form.action" class="btn btn-submit" @click="onSubmit()">

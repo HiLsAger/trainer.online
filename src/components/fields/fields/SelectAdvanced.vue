@@ -24,11 +24,11 @@ import BaseField from "@/components/fields/fields/BaseField";
 @Options({
   props: {
     label: Object as () => Label,
-    name: String
+    name: String,
+    alias: String,
   },
 })
 export default class SelectAdvanced extends BaseField {
-  name!: string;
   list?: Record<string, string | number> = {};
 
   active: boolean = false;

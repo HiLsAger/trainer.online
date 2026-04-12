@@ -7,6 +7,9 @@ import MultiSelectAdvanced from "@/components/fields/fields/MultiSelectAdvanced.
 import ColorPickerField from "@/components/fields/fields/ColorPickerField.vue";
 import TextArea from "@/components/fields/fields/TextArea.vue";
 import SelectAdvanced from "@/components/fields/fields/SelectAdvanced.vue";
+import ScheduleSwitcher from "@/components/fields/fields/ScheduleSwitcher.vue";
+import DateTimePicker from "@/components/fields/fields/DateTimePicker.vue";
+import Checkbox from "@/components/fields/fields/Checkbox.vue";
 
 export default class FieldFactory {
     private static instance: FieldFactory | null = null;
@@ -21,8 +24,6 @@ export default class FieldFactory {
 
     public createField(label: Label): Component | null {
         switch (label.templateType) {
-            case 'text':
-                return FieldText;
             case 'previewText':
                 return PreviewText;
             case 'select':
@@ -32,10 +33,16 @@ export default class FieldFactory {
             case 'multiSelectAdvanced':
                 return MultiSelectAdvanced;
             case 'colorPicker':
-                return ColorPickerField
+                return ColorPickerField;
             case 'textArea':
-                return TextArea
+                return TextArea;
+            case 'schedule':
+                return ScheduleSwitcher;
             case 'datetime':
+                return DateTimePicker;
+            case 'checkbox':
+                return Checkbox;
+            case 'text':
             default:
                 return FieldText;
         }

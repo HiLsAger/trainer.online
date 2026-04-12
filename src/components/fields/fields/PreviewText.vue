@@ -14,10 +14,10 @@ import BaseField from "@/components/fields/fields/BaseField";
 @Options({
   props: {
     label: Object as () => Label,
-    name: String
+    name: String,
+    alias: String,
   },
 })
 export default class PreviewText extends BaseField {
-  name!: string;
 }
 </script>
