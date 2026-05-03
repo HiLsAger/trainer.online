@@ -6,6 +6,9 @@ export default class BaseField extends Vue {
     alias!: string;
     name!: string;
 
+    /**
+     * Обработка значения из label.value
+     */
     public get labelValue(): any {
         if (!this.label.value) {
             return undefined;
@@ -18,16 +21,30 @@ export default class BaseField extends Vue {
         return this.label.value;
     }
 
+    /**
+     * Поиск предустановленного значения из кук
+     */
     protected get cookieValue(): string {
         return `${this.alias}.${this.name.toLowerCase()}`
     }
 
+    /**
+     * Возвращаем значение через $emit
+     */
     public handleInput(event: Event): void {
         const inputElement = event.target as HTMLInputElement;
 
-        this.$emit("handleInput", inputElement.value);
+        this.$emit(
+            "handleInput",
+            this.label.type === 'number'
+                ? Number(inputElement.value)
+                : inputElement.value
+        );
     }
 
+    /**
+     * Обработка значение входящего значения при инициализации с последующим возвращением
+     */
     protected triggerInitialInput(): void {
         if (this.labelValue === undefined) {
             return;

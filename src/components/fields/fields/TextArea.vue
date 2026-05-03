@@ -1,6 +1,6 @@
 <template>
   <div :class="label.error ? 'validate-error' : ''">
-    <label :for="label.title">{{ label.title }}</label>
+    <label v-if="label?.title" :for="label.title">{{ label.title }}</label>
     <textarea
         :id="name"
         :name="name"

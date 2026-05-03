@@ -1,6 +1,7 @@
 <template>
   <div :class="label.error ? 'validate-error' : ''">
-    <label :for="label.title">{{ label.title }}</label>
+    <label v-if="label?.title" :for="label.title">{{ label.title }}</label>
+
     <input
         :id="name"
         :name="name"
@@ -8,11 +9,15 @@
         :placeholder="label.placeholder"
         type="text"
         :value="formattedValue"
-        @click="togglePicker"
         readonly
         ref="inputRef"
+        @click="togglePicker"
     />
-    <div v-if="label.error" class="validate-message"><span>{{ label.error }}</span></div>
+
+    <div v-if="label.error" class="validate-message">
+      <span>{{ label.error }}</span>
+    </div>
+
     <div v-if="showPicker" class="dropdown-picker" ref="pickerRef">
       <div class="picker-header">
         <button
@@ -22,60 +27,73 @@
         >
           ←
         </button>
+
         <h3 class="picker-title">{{ currentStepTitle }}</h3>
+
         <button
             class="nav-button"
             @click="nextStep"
-            :disabled="currentStepIndex === availableSteps.length - 1 || !canProceed"
+            :disabled="currentStepIndex === availableSteps.length - 1 && !canProceed"
         >
           →
         </button>
       </div>
+
       <div class="picker-body">
-        <div v-if="needsYear" :class="[currentStep !== 'decade' ? 'hide': '', 'decade-selection']">
+        <!-- decade -->
+        <div v-if="currentStep === 'decade'" class="decade-selection">
           <div
               v-for="decade in decades"
               :key="decade"
               class="selection-item"
-              :class="{ 'selected': selectedDecade === decade }"
+              :class="{ selected: selectedDecade === decade }"
               @click="selectDecade(decade)"
           >
             {{ decade }} - {{ decade + 9 }}
           </div>
         </div>
-        <div v-if="needsYear" :class="[currentStep !== 'year' ? 'hide': '', 'year-selection']">
+
+        <!-- year -->
+        <div v-if="currentStep === 'year'" class="year-selection">
           <div
               v-for="year in years"
               :key="year"
               class="selection-item"
-              :class="{ 'selected': selectedYear === year }"
+              :class="{ selected: selectedYear === year }"
               @click="selectYear(year)"
           >
             {{ year }}
           </div>
         </div>
-        <div v-if="needsMonth" :class="[currentStep !== 'month' ? 'hide': '', 'month-selection']">
+
+        <!-- month -->
+        <div v-if="currentStep === 'month'" class="month-selection">
           <div
               v-for="(month, index) in months"
               :key="index"
               class="selection-item"
-              :class="{ 'selected': selectedMonth === index }"
+              :class="{ selected: selectedMonth === index }"
               @click="selectMonth(index)"
           >
             {{ month }}
           </div>
         </div>
-        <div v-if="needsDay" :class="[currentStep !== 'day' ? 'hide': '', 'day-selection']">
+
+        <!-- day -->
+        <div v-if="currentStep === 'day'" class="day-selection">
           <div class="days-header">
-            <span v-for="day in weekDays" :key="day" class="week-day">{{ day }}</span>
+            <span v-for="day in weekDays" :key="day" class="week-day">
+              {{ day }}
+            </span>
           </div>
+
           <div class="days-grid">
             <div
                 v-for="day in calendarDays"
-                :key="`${selectedYear}-${selectedMonth}-${day.date}-${day.isCurrentMonth}`"
+                :key="`${day.date}-${day.isCurrentMonth}`"
                 class="day-item"
                 :class="{
-                'selected': day.isCurrentMonth && selectedDay === day.date,
+                selected: day.isCurrentMonth && selectedDay === day.date,
                 'other-month': !day.isCurrentMonth,
                 'current-day': day.isCurrentMonth && isCurrentDay(day.date)
               }"
@@ -85,8 +103,9 @@
             </div>
           </div>
         </div>
-        <div v-if="needsHours || needsMinutes || needsSeconds"
-             :class="[currentStep !== 'time' ? 'hide': '', 'time-selection']">
+
+        <!-- time -->
+        <div v-if="currentStep === 'time'" class="time-selection">
           <div class="time-controls">
             <div class="time-group" v-if="needsHours">
               <label>Часы:</label>
@@ -94,36 +113,41 @@
                   type="number"
                   v-model.number="selectedHour"
                   class="time-input"
-                  :min="0"
-                  :max="23"
+                  min="0"
+                  max="23"
                   @change="validateTime"
-              >
+              />
             </div>
+
             <div class="time-group" v-if="needsMinutes">
               <label>Минуты:</label>
               <input
                   type="number"
                   v-model.number="selectedMinute"
                   class="time-input"
-                  :min="0"
-                  :max="59"
+                  min="0"
+                  max="59"
                   @change="validateTime"
-              >
+              />
             </div>
+
             <div class="time-group" v-if="needsSeconds">
               <label>Секунды:</label>
               <input
                   type="number"
                   v-model.number="selectedSecond"
                   class="time-input"
-                  :min="0"
-                  :max="59"
+                  min="0"
+                  max="59"
                   @change="validateTime"
-              >
+              />
             </div>
           </div>
+
           <div class="time-actions">
-            <button class="btn btn-primary" @click="applySelection">Применить</button>
+            <button class="btn btn-primary" @click="applySelection">
+              Применить
+            </button>
           </div>
         </div>
       </div>
@@ -132,8 +156,8 @@
 </template>
 
 <script lang="ts">
-import {Options} from 'vue-class-component';
-import {Label} from '@/utility/interfaces/label.interface';
+import {Options} from "vue-class-component";
+import {Label} from "@/utility/interfaces/label.interface";
 import BaseField from "@/components/fields/fields/BaseField";
 
 interface DateTimeOptions {
@@ -145,12 +169,30 @@ interface DateTimeOptions {
   props: {
     label: Object as () => Label & { options?: DateTimeOptions },
     name: String,
-    alias: String,
+    alias: String
   },
+  watch: {
+    "label.value": {
+      immediate: true,
+      handler(value: string | number | undefined) {
+        value
+            ? this.parseValue(value.toString())
+            : this.setCurrentDate();
+      }
+    },
+    "label.options": {
+      deep: true,
+      handler() {
+        if (this.label.value) {
+          this.parseValue(this.label.value.toString());
+        }
+      }
+    }
+  }
 })
 export default class DateTimePicker extends BaseField {
   protected showPicker = false;
-  protected currentStep = '';
+  protected currentStep = "";
   protected availableSteps: string[] = [];
 
   protected selectedDecade = 0;
@@ -161,414 +203,454 @@ export default class DateTimePicker extends BaseField {
   protected selectedMinute = 0;
   protected selectedSecond = 0;
 
-  protected readonly months = [
-    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
-  ];
+  protected readonly months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 
-  protected readonly weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+  protected readonly weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
+  /**
+   * Получение маски из конфигурации, иначе маска по умолчанию d.m.y h:i:s
+   */
   get mask(): string {
-    return this.label.options?.mask || 'y-m-d h:i:s';
+    return this.label.options?.mask || "d.m.y h:i:s";
   }
 
+  /**
+   * Определение стартового этапа, иначе получаем самый первый
+   */
   get startStep(): string {
     return this.label.options?.startStep || this.availableSteps[0];
   }
 
+  /**
+   * Определение необходимости установки года
+   */
   get needsYear(): boolean {
-    return this.mask.includes('y');
+    return this.mask.includes("y");
   }
 
+  /**
+   * Определение необходимости установки месяца
+   */
   get needsMonth(): boolean {
-    return this.mask.includes('m');
+    return this.mask.includes("m");
   }
 
+  /**
+   * Определение необходимости установки дня
+   */
   get needsDay(): boolean {
-    return this.mask.includes('d');
+    return this.mask.includes("d");
   }
 
+  /**
+   * Определение необходимости установки часа
+   */
   get needsHours(): boolean {
-    return this.mask.includes('h');
+    return this.mask.includes("h");
   }
 
+  /**
+   * Определение необходимости установки минут
+   */
   get needsMinutes(): boolean {
-    return this.mask.includes('i');
+    return this.mask.includes("i");
   }
 
+  /**
+   * Определение необходимости установки секунд
+   */
   get needsSeconds(): boolean {
-    return this.mask.includes('s');
+    return this.mask.includes("s");
   }
 
+  /**
+   * Определение необходимости установки времени
+   */
   get needsTime(): boolean {
     return this.needsHours || this.needsMinutes || this.needsSeconds;
   }
 
+  /**
+   * Получение текущего этапа из списка доступных
+   */
   get currentStepIndex(): number {
     return this.availableSteps.indexOf(this.currentStep);
   }
 
+  /**
+   * Названия этапов
+   */
   get currentStepTitle(): string {
-    const titles: { [key: string]: string } = {
-      'decade': 'Выбор десятилетия',
-      'year': 'Выбор года',
-      'month': 'Выбор месяца',
-      'day': 'Выбор дня',
-      'time': 'Выбор времени'
-    };
-    return titles[this.currentStep] || '';
+    return {
+      decade: "Выбор десятилетия",
+      year: "Выбор года",
+      month: "Выбор месяца",
+      day: "Выбор дня",
+      time: "Выбор времени"
+    }[this.currentStep] || "";
   }
 
+  /**
+   * Возможно ли перейти в следующему этапу
+   */
   get canProceed(): boolean {
-    switch (this.currentStep) {
-      case 'decade':
-        return this.selectedDecade !== 0;
-      case 'year':
-        return this.selectedYear !== 0;
-      case 'month':
-        return this.selectedMonth !== 0;
-      case 'day':
-        return this.selectedDay !== 0;
-      case 'time':
-        return this.isTimeValid;
-      default:
-        return false;
-    }
+    return this.currentStep !== "time" || this.isTimeValid;
   }
 
+  /**
+   * Проверка корректности времени
+   */
   get isTimeValid(): boolean {
-    return (this.needsHours ? this.selectedHour >= 0 && this.selectedHour <= 23 : true) &&
-        (this.needsMinutes ? this.selectedMinute >= 0 && this.selectedMinute <= 59 : true) &&
-        (this.needsSeconds ? this.selectedSecond >= 0 && this.selectedSecond <= 59 : true);
+    return (
+        this.inRange(this.selectedHour, 0, 23) &&
+        this.inRange(this.selectedMinute, 0, 59) &&
+        this.inRange(this.selectedSecond, 0, 59)
+    );
   }
 
+  /**
+   * Является ли день текущим
+   */
+  protected isCurrentDay(day: number): boolean {
+    const now = new Date();
+
+    return (
+        now.getFullYear() === this.selectedYear &&
+        now.getMonth() === this.selectedMonth &&
+        now.getDate() === day
+    );
+  }
+
+  /**
+   * Получение списка десятилетия
+   */
   get decades(): number[] {
-    const currentYear = new Date().getFullYear();
-    const startDecade = Math.floor(currentYear / 10) * 10;
-    const decades = [];
-    for (let i = 0; i < 6; i++) {
-      decades.push(startDecade + i * 10);
-    }
-    return decades;
+    const start = Math.floor(new Date().getFullYear() / 10) * 10;
+    return Array.from({length: 6}, (_, i) => start + i * 10);
   }
 
+  /**
+   * Получение списка годов, для этапа выбора года
+   */
   get years(): number[] {
-    const years = [];
-    for (let i = 0; i < 10; i++) {
-      years.push(this.selectedDecade + i);
-    }
-    return years;
+    return Array.from({length: 10}, (_, i) => this.selectedDecade + i);
   }
 
-  get calendarDays(): { date: number; isCurrentMonth: boolean }[] {
-    if (!this.selectedYear && this.needsYear) return [];
-    if (!this.selectedMonth && this.needsMonth) return [];
+  /**
+   * Расчёт и получение списка календарных дней в 6 строк по 7 дней
+   * 1. Получение первого дня в выбранном месяце и расчёт первого дня для календаря, чтобы попасть в 6 строк
+   * 2. Расчёт количества дней в выбранном месяце и расчёт дней в предыдущем месяце
+   * 3. Заполнение массива дней 42 элементами так, чтобы текущий месяц поместился полностью.
+   * Если выбранный месяц + часть предыдущего < 42, то до заполняем массив датами из следующего месяца
+   */
+  get calendarDays(): { date: number, isCurrentMonth: boolean }[] {
+    const firstDay = new Date(this.selectedYear, this.selectedMonth, 1);
+    const startDay = (firstDay.getDay() + 6) % 7;
 
-    const year = this.selectedYear || new Date().getFullYear();
-    const month = this.selectedMonth || new Date().getMonth();
+    const daysInMonth = new Date(
+        this.selectedYear,
+        this.selectedMonth + 1,
+        0
+    ).getDate();
 
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const daysFromPrevMonth = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
-    const prevMonthLastDay = new Date(year, month, 0).getDate();
+    const prevMonthDays = new Date(
+        this.selectedYear,
+        this.selectedMonth,
+        0
+    ).getDate();
+
     const days = [];
-
-    for (let i = prevMonthLastDay - daysFromPrevMonth + 1; i <= prevMonthLastDay; i++) {
-      days.push({date: i, isCurrentMonth: false});
+    for (let i = startDay - 1; i >= 0; i--) {
+      days.push({date: prevMonthDays - i, isCurrentMonth: false});
     }
 
     for (let i = 1; i <= daysInMonth; i++) {
       days.push({date: i, isCurrentMonth: true});
     }
 
-    const totalCells = 42; // 6 недель
-    const nextMonthDays = totalCells - days.length;
-    for (let i = 1; i <= nextMonthDays; i++) {
-      days.push({date: i, isCurrentMonth: false});
+    while (days.length < 42) {
+      days.push({
+        date: days.length - daysInMonth - startDay + 1,
+        isCurrentMonth: false
+      });
     }
-    console.log(days)
+
     return days;
   }
 
+  /**
+   * Формирование финальной даты, заполняя маску
+   */
   get formattedValue(): string {
-    if (!this.hasSelectedDate && !this.hasSelectedTime) return '';
+    let value = this.mask;
 
-    let result = this.mask;
+    const map: Record<string, string> = {
+      y: String(this.selectedYear),
+      m: String(this.selectedMonth + 1).padStart(2, "0"),
+      d: String(this.selectedDay).padStart(2, "0"),
+      h: String(this.selectedHour).padStart(2, "0"),
+      i: String(this.selectedMinute).padStart(2, "0"),
+      s: String(this.selectedSecond).padStart(2, "0")
+    };
 
-    if (this.needsYear && this.selectedYear) {
-      result = result.replace(/y+/g, this.selectedYear.toString());
-    }
+    Object.entries(map).forEach(([key, val]) => {
+      value = value.replace(new RegExp(`${key}+`, "g"), val);
+    });
 
-    if (this.needsMonth && this.selectedMonth !== undefined) {
-      const monthStr = (this.selectedMonth + 1).toString().padStart(2, '0');
-      result = result.replace(/m+/g, monthStr);
-    }
-
-    if (this.needsDay && this.selectedDay !== 0) {
-      const dayStr = this.selectedDay.toString().padStart(2, '0');
-      result = result.replace(/d+/g, dayStr);
-    }
-
-    if (this.needsHours && this.selectedHour !== undefined) {
-      const hourStr = this.selectedHour.toString().padStart(2, '0');
-      result = result.replace(/h+/g, hourStr);
-    }
-
-    if (this.needsMinutes && this.selectedMinute !== undefined) {
-      const minuteStr = this.selectedMinute.toString().padStart(2, '0');
-      result = result.replace(/i+/g, minuteStr);
-    }
-
-    if (this.needsSeconds && this.selectedSecond !== undefined) {
-      const secondStr = this.selectedSecond.toString().padStart(2, '0');
-      result = result.replace(/s+/g, secondStr);
-    }
-
-    return result;
+    return value;
   }
 
-  get hasSelectedDate(): boolean {
-    return (this.needsYear ? this.selectedYear !== 0 : true) &&
-        (this.needsMonth ? this.selectedMonth !== undefined : true) &&
-        (this.needsDay ? this.selectedDay !== 0 : true);
+  protected inRange(v: number, min: number, max: number): boolean {
+    return v >= min && v <= max;
   }
 
-  get hasSelectedTime(): boolean {
-    return (this.needsHours ? this.selectedHour !== undefined : true) &&
-        (this.needsMinutes ? this.selectedMinute !== undefined : true) &&
-        (this.needsSeconds ? this.selectedSecond !== undefined : true);
-  }
-
+  /**
+   * Инициализация компонента
+   * 1. Установка необходимых этапов
+   * 2. Определение и установка первого этапа
+   */
   protected initializeSteps(): void {
     this.availableSteps = [];
 
-    if (this.needsYear) {
-      this.availableSteps.push('decade', 'year');
-    }
-    if (this.needsMonth) {
-      this.availableSteps.push('month');
-    }
-    if (this.needsDay) {
-      this.availableSteps.push('day');
-    }
-    if (this.needsTime) {
-      this.availableSteps.push('time');
-    }
+    if (this.needsYear) this.availableSteps.push("decade", "year");
+    if (this.needsMonth) this.availableSteps.push("month");
+    if (this.needsDay) this.availableSteps.push("day");
+    if (this.needsTime) this.availableSteps.push("time");
 
-    const startIndex = Math.max(0, this.availableSteps.indexOf(this.startStep));
-    this.currentStep = this.availableSteps[startIndex];
+    this.currentStep = this.availableSteps.includes(this.startStep)
+        ? this.startStep
+        : this.availableSteps[0];
   }
 
-  protected initializeFromCurrentValue(): void {
-    if (this.label.value) {
-      this.parseValueFromMask(this.label.value.toString());
-    } else {
-      this.setCurrentDate();
-    }
-  }
-
+  /**
+   * Заполнить компонент текущей датой
+   */
   protected setCurrentDate(): void {
     const now = new Date();
+
     this.selectedYear = now.getFullYear();
     this.selectedMonth = now.getMonth();
     this.selectedDay = now.getDate();
     this.selectedHour = now.getHours();
     this.selectedMinute = now.getMinutes();
     this.selectedSecond = now.getSeconds();
+
     this.selectedDecade = Math.floor(this.selectedYear / 10) * 10;
   }
 
-  protected parseValueFromMask(value: string): void {
-    try {
-      const yearMatch = value.match(/(\d{4})/);
-      const monthMatch = value.match(/-(\d{2})-/) || value.match(/(\d{2})/);
-      const dayMatch = value.match(/-(\d{2})(?:\s|$)/) || value.match(/(\d{2})(?:\s|$)/);
-      const timeMatch = value.match(/(\d{1,2}):(\d{1,2}):(\d{1,2})/) || value.match(/(\d{1,2}):(\d{1,2})/);
+  /**
+   * Разбор даты в соответствии с маской
+   */
+  protected parseValue(value: string): void {
+    const regex = this.prepareMaskToRegex(this.mask)
 
-      if (this.needsYear && yearMatch) {
-        this.selectedYear = parseInt(yearMatch[1]);
-        this.selectedDecade = Math.floor(this.selectedYear / 10) * 10;
-      } else if (this.needsYear) {
-        this.selectedYear = new Date().getFullYear();
-        this.selectedDecade = Math.floor(this.selectedYear / 10) * 10;
-      }
+    const match = value.match(new RegExp(`^${regex}$`));
 
-      if (this.needsMonth && monthMatch) {
-        this.selectedMonth = parseInt(monthMatch[1]) - 1;
-      } else if (this.needsMonth) {
-        this.selectedMonth = new Date().getMonth();
-      }
-
-      if (this.needsDay && dayMatch) {
-        this.selectedDay = parseInt(dayMatch[1]);
-      } else if (this.needsDay) {
-        this.selectedDay = new Date().getDate();
-      }
-
-      if (timeMatch) {
-        if (this.needsHours) {
-          this.selectedHour = parseInt(timeMatch[1]) || 0;
-        }
-        if (this.needsMinutes) {
-          this.selectedMinute = parseInt(timeMatch[2]) || 0;
-        }
-        if (this.needsSeconds) {
-          this.selectedSecond = parseInt(timeMatch[3]) || 0;
-        }
-      } else {
-        const now = new Date();
-        if (this.needsHours) this.selectedHour = now.getHours();
-        if (this.needsMinutes) this.selectedMinute = now.getMinutes();
-        if (this.needsSeconds) this.selectedSecond = now.getSeconds();
-      }
-    } catch (error) {
-      console.error('Error parsing date value:', error);
+    if (!match) {
       this.setCurrentDate();
+      return;
     }
+
+    let index = 1;
+
+    const next = (char: string) =>
+        this.mask.includes(char) ? Number(match[index++]) : undefined;
+
+    const day = next("d");
+    const month = next("m");
+    const year = next("y");
+    const hour = next("h");
+    const minute = next("i");
+    const second = next("s");
+
+    if (year) this.selectedYear = year;
+    if (month) this.selectedMonth = month - 1;
+    if (day) this.selectedDay = day;
+
+    this.selectedHour = hour ?? 0;
+    this.selectedMinute = minute ?? 0;
+    this.selectedSecond = second ?? 0;
+
+    this.selectedDecade = Math.floor(this.selectedYear / 10) * 10;
+
+    this.clampDay();
+    this.validateTime();
   }
 
-  public togglePicker(event: MouseEvent): void {
-    event.stopPropagation();
+  protected prepareMaskToRegex(mask: string): string {
+    const map: Record<string, string> = {
+      y: "(\\d{4})",
+      m: "(\\d{1,2})",
+      d: "(\\d{1,2})",
+      h: "(\\d{1,2})",
+      i: "(\\d{1,2})",
+      s: "(\\d{1,2})",
+    };
 
-    if (this.showPicker) {
-      this.closePicker();
-    } else {
-      this.openPicker();
-    }
-  }
+    let regex = "";
+    let i = 0;
+    while (i < mask.length) {
+      const char = mask[i];
 
-  public openPicker(): void {
-    this.showPicker = true;
-
-    this.initializeSteps();
-    this.initializeFromCurrentValue();
-
-    this.$nextTick(() => {
-      this.addClickOutsideListener();
-    });
-  }
-
-  public closePicker(): void {
-    this.showPicker = false;
-    this.removeClickOutsideListener();
-  }
-
-  protected applySelection(): void {
-    if (this.isTimeValid) {
-      this.updateInputValue();
-      this.closePicker();
-    }
-  }
-
-  protected updateInputValue(): void {
-    const fakeEvent = {
-      target: {
-        value: this.formattedValue
+      if (map[char]) {
+        while (mask[i + 1] === char) i++;
+        regex += map[char];
+      } else {
+        regex += char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       }
-    } as unknown as Event;
-    this.handleInput(fakeEvent);
+
+      i++;
+    }
+
+    return regex;
   }
 
-  protected addClickOutsideListener(): void {
-    document.addEventListener('click', this.handleClickOutside);
-  }
+  protected clampDay(): void {
+    const max = new Date(
+        this.selectedYear,
+        this.selectedMonth + 1,
+        0
+    ).getDate();
 
-  protected removeClickOutsideListener(): void {
-    document.removeEventListener('click', this.handleClickOutside);
-  }
-
-  protected handleClickOutside(event: MouseEvent): void {
-    const target = event.target as Node;
-
-    const pickerRef = this.$refs.pickerRef as HTMLDivElement;
-    const inputRef = this.$refs.inputRef as HTMLInputElement;
-
-    if (pickerRef && !pickerRef.contains(target) &&
-        inputRef && !inputRef.contains(target)) {
-      this.closePicker();
+    if (this.selectedDay > max) {
+      this.selectedDay = max;
     }
   }
 
   protected validateTime(): void {
-    if (this.selectedHour < 0) this.selectedHour = 0;
-    if (this.selectedHour > 23) this.selectedHour = 23;
-    if (this.selectedMinute < 0) this.selectedMinute = 0;
-    if (this.selectedMinute > 59) this.selectedMinute = 59;
-    if (this.selectedSecond < 0) this.selectedSecond = 0;
-    if (this.selectedSecond > 59) this.selectedSecond = 59;
+    this.selectedHour = Math.min(23, Math.max(0, this.selectedHour));
+    this.selectedMinute = Math.min(59, Math.max(0, this.selectedMinute));
+    this.selectedSecond = Math.min(59, Math.max(0, this.selectedSecond));
   }
 
+  /**
+   * Вернуть установленную дату значение
+   */
+  protected emitValue(): void {
+    this.handleInput({
+      target: {value: this.formattedValue}
+    } as unknown as Event);
+  }
+
+  /**
+   * ВКЛ/ВЫКЛ окно выбора
+   */
+  public togglePicker(e: MouseEvent): void {
+    e.stopPropagation();
+    this.showPicker ? this.closePicker() : this.openPicker();
+  }
+
+  /**
+   * включить окно выбора
+   */
+  public openPicker(): void {
+    this.initializeSteps();
+    this.showPicker = true;
+
+    this.$nextTick(() => {
+      document.addEventListener("click", this.handleClickOutside);
+    });
+  }
+
+  /**
+   * Обработка события нажатия вне окна выбора даты и времени
+   */
+  protected handleClickOutside(event: MouseEvent): void {
+    const target = event.target as Node;
+
+    const picker = this.$refs.pickerRef as HTMLElement;
+    const input = this.$refs.inputRef as HTMLElement;
+
+    if (
+        picker &&
+        !picker.contains(target) &&
+        input &&
+        !input.contains(target)
+    ) {
+      this.closePicker();
+    }
+  }
+
+  /**
+   * Переключение на предыдущий этап
+   */
   protected previousStep(): void {
     if (this.currentStepIndex > 0) {
       this.currentStep = this.availableSteps[this.currentStepIndex - 1];
     }
   }
 
+  /**
+   * Переключение на следующий этап
+   */
   protected nextStep(): void {
-    if (!this.canProceed) {
-      return;
-    }
+    if (!this.canProceed) return;
 
     if (this.currentStepIndex < this.availableSteps.length - 1) {
       this.currentStep = this.availableSteps[this.currentStepIndex + 1];
       return;
     }
 
-    if (this.currentStepIndex === this.availableSteps.length - 1) {
-      this.applySelection();
-      return;
-    }
+    this.applySelection();
   }
 
-  protected selectDecade(decade: number): void {
-    this.selectedDecade = decade;
+  /**
+   * Закрыть окно компонента
+   */
+  public closePicker(): void {
+    this.showPicker = false;
+    document.removeEventListener("click", this.handleClickOutside);
+  }
+
+  /**
+   * Применить изменения из компонента
+   */
+  protected applySelection(): void {
+    this.validateTime();
+    this.emitValue();
+    this.closePicker();
+  }
+
+  /**
+   * Выбрать десятилетие
+   */
+  protected selectDecade(v: number) {
+    this.selectedDecade = v;
     this.nextStep();
   }
 
-  protected selectYear(year: number): void {
-    this.selectedYear = year;
+  /**
+   * Выбрать год
+   */
+  protected selectYear(v: number) {
+    this.selectedYear = v;
     this.nextStep();
   }
 
-  protected selectMonth(month: number): void {
-    this.selectedMonth = month;
+  /**
+   * Выбрать месяц
+   */
+  protected selectMonth(v: number) {
+    this.selectedMonth = v;
+    this.clampDay();
     this.nextStep();
   }
 
-  protected selectDay(day: number): void {
-    this.selectedDay = day;
+  /**
+   * Выбрать день
+   */
+  protected selectDay(v: number) {
+    this.selectedDay = v;
     this.nextStep();
   }
 
-  protected isCurrentDay(day: number): boolean {
-    const now = new Date();
-    return this.selectedYear === now.getFullYear() &&
-        this.selectedMonth === now.getMonth() &&
-        day === now.getDate();
+  mounted(): void {
+    this.initializeSteps();
+    this.emitValue();
   }
 
-  protected triggerInitialInput(): void {
-    if (this.formattedValue === undefined) {
-      return;
-    }
-
-    const fakeEvent = {
-      target: {
-        value: this.formattedValue
-      }
-    } as unknown as Event;
-
-    this.handleInput(fakeEvent);
-  }
-
-  public mounted(): void {
-    this.initializeFromCurrentValue();
-    this.triggerInitialInput();
-  }
-
-  public beforeUnmount(): void {
-    this.removeClickOutsideListener();
+  beforeUnmount(): void {
+    document.removeEventListener("click", this.handleClickOutside);
   }
 }
 </script>

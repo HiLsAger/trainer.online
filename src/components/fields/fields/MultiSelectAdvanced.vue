@@ -1,6 +1,6 @@
 <template>
   <div :class="label.error ? 'validate-error' : ''">
-    <label :for="label.title">{{ label.title }}</label>
+    <label v-if="label?.title" :for="label.title">{{ label.title }}</label>
     <div class="multi-select-advanced">
       <div class="row multi-select-advanced__actions">
         <div class="multi-select-advanced__action action-move-left">

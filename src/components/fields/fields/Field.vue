@@ -1,6 +1,6 @@
 <template>
   <div :class="[label.error ? 'validate-error' : '', label?.type === 'checkbox' ? 'row' : '']">
-    <label :for="label.title">{{ label.title }}</label>
+    <label v-if="label?.title" :for="label.title">{{ label.title }}</label>
     <input
         :id="name"
         :name="name"

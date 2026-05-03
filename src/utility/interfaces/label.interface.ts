@@ -7,7 +7,7 @@ export interface Form {
 }
 
 export interface Label {
-    title: string;
+    title: string | null;
     value?: string | number | boolean;
     values?: string[] | number[]
     placeholder?: string;

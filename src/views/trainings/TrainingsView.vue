@@ -44,7 +44,8 @@ export default class TrainingsView extends Vue {
   };
   itemsList: Grid = {
     head: [],
-    body: []
+    body: [],
+    options: {page: 0, limit: 0, countPage: 0}
   };
   formChangeKey: number = 0;
   gridScore = 0;

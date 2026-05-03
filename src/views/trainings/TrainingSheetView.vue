@@ -10,20 +10,30 @@
             @handleInputFields="handleInputUpdate"
         />
       </div>
-      <div class="selected-date">{{ selectedWeekDateInterval.startDate }} - {{ selectedWeekDateInterval.endDate }}</div>
     </div>
     <div class="training-sheet-table" v-if="isSelectTrainingRoom && trainingSheetSettings">
       <div class="empty-cell"></div>
       <div class="header-row table-row">
-        <div class="column" v-for="day in daysOfWeek" v-html="day"></div>
+        <div class="column" v-for="date in dateOfWeekList" v-html="date.displayDate"></div>
       </div>
       <div class="time-column column">
-        <div class="time-column-cell cell" v-for="time in timeList">{{ time }}</div>
+        <div
+            class="time-column-cell cell"
+            v-for="time in timeList"
+        >
+          {{ time }}
+          <i class="bi bi-info-circle-fill info" v-tooltip="time"></i>
+        </div>
       </div>
       <div class="training-body-sheet table-row">
-        <div class="column" v-for="day in daysOfWeek">
-          <div class="cell action-cell" v-for="time in timeList" @click="showModal(time, getDateByDay(day))">
-            {{ time }}
+        <div class="column" v-for="date in dateOfWeekList">
+          <div
+              class="cell action-cell"
+              v-for="time in timeList"
+              @click="showModal(time, date.date)"
+              v-tooltip="'Добавить тренировку'"
+          >
+            <span>&nbsp;</span>
           </div>
         </div>
       </div>
@@ -44,7 +54,7 @@
           v-if="modalForm && modalForm.labels && Object.keys(modalForm.labels).length > 0"
           :key="formChangeKey"
           :form="modalForm"
-          :show="true"
+          :show="isShowModal"
           @handleInputUpdate="handleInputUpdateModal"
       >
       </ModalComponent>
@@ -72,10 +82,11 @@ export default class TrainingSheetView extends Vue {
     action: 'test',
     method: 'Get',
     labels: {
-      trainingRoom: {
+      training_room_id: {
         title: 'Зал',
         placeholder: 'Зал',
         templateType: 'select',
+        type: 'number',
         list: 'fields/training-rooms',
         value: '@COOKIE'
       }
@@ -84,15 +95,16 @@ export default class TrainingSheetView extends Vue {
   protected baseForm: Form = {
     alias: "trainings-sheet-form",
     labels: {
-      training: {
-        title: 'Тренеровка',
-        placeholder: 'Тренеровка',
+      training_id: {
+        title: 'Тренировка',
+        placeholder: 'Тренировка',
         templateType: 'select',
+        type: 'number',
         list: 'fields/trainings',
         required: true
       },
-      startTime: {
-        title: 'Время начала тренеровки',
+      start_time: {
+        title: 'Время начала тренировки',
         placeholder: 'время чч:мм',
         templateType: 'datetime',
         required: true,
@@ -100,8 +112,16 @@ export default class TrainingSheetView extends Vue {
           mask: 'h:i'
         }
       },
-      startDate: {
-        title: 'Дата старата тренеровки',
+      count_cell: {
+        title: 'Количество ячеек',
+        placeholder: '1',
+        templateType: 'text',
+        type: 'number',
+        value: 1,
+        required: true,
+      },
+      start_date: {
+        title: 'Дата старта тренировки',
         placeholder: 'дата дд.мм.гггг',
         templateType: 'datetime',
         required: true,
@@ -109,22 +129,35 @@ export default class TrainingSheetView extends Vue {
           mask: 'd.m.y'
         }
       },
-      endDate: {
-        title: 'Дата окончания тренеровки',
+      end_date: {
+        title: 'Дата окончания тренировки',
         placeholder: 'дата дд.мм.гггг',
         templateType: 'datetime',
         required: true,
         options: {
           mask: 'd.m.y'
         }
+      },
+      price: {
+        title: 'Цена',
+        placeholder: '',
+        templateType: 'text',
+        type: 'number',
+        value: 0,
+        required: true,
       },
       always: {
         title: 'Показывать постоянно?',
         templateType: 'checkbox',
         value: true
+      },
+      training_room_id: {
+        title: null,
+        templateType: 'text',
+        type: 'hidden'
       }
     },
-    action: '/trainings-sheet/training',
+    action: 'schedules/schedule',
     method: 'POST'
   };
 
@@ -144,50 +177,40 @@ export default class TrainingSheetView extends Vue {
     "saturday": "СБ",
     "sunday": "ВС",
   }
-  protected daysOfWeek: string[] = [];
-  protected datesOfWeek: Date[] = [];
+  protected dateOfWeekList: { displayDate: string, date: Date }[] = [];
   protected formChangeKey: number = 0;
+  protected isShowModal: boolean = false;
 
   protected resetWeekLineTrigger: number = 0;
 
   protected _selectedDateInterval: { startDate: Date | null, endDate: Date | null } = {startDate: null, endDate: null}
 
   protected get isSelectTrainingRoom(): boolean {
-    return !!this.formData['trainingroom'];
+    return !!this.formData['training_room_id'];
   }
 
-  protected showModal(startTime: number, startDate: number): void {
-    this.modalForm = this.deepCopyForm(this.baseForm);
+  protected showModal(startTime: number, startDate: Date): void {
+    const form = this.deepCopyForm(this.baseForm);
+    form.title = 'Создать тренировку';
 
-    this.modalForm.labels['startTime'].value = startTime;
-    this.modalForm.labels['startDate'].value = startDate;
+    const currentDate = this.prepareDate(startDate);
+    form.labels.start_time.value = startTime;
+    form.labels.start_date.value = currentDate;
+    form.labels.end_date.value = currentDate;
+    form.labels.training_room_id.value = this.formData['training_room_id'];
 
+    this.modalForm = form;
+
+    this.isShowModal = true;
     this.formChangeKey++;
   }
 
-  protected deepCopyForm(form: Form): Form {
-    return form
+  protected prepareDate(date: Date): string {
+    return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
   }
 
-  protected getDateByDay(dayString: string): string {
-    const index = this.daysOfWeek.findIndex(day =>
-        day.includes(dayString.split(' ')[0]) ||
-        day.replace(/<[^>]*>/g, '').includes(dayString.split(' ')[0])
-    );
-
-    if (index !== -1 && this.datesOfWeek[index]) {
-      const date = this.datesOfWeek[index];
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear();
-      return `${day}.${month}.${year}`;
-    }
-
-    const today = new Date();
-    const day = today.getDate().toString().padStart(2, '0');
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const year = today.getFullYear();
-    return `${day}.${month}.${year}`;
+  protected deepCopyForm(form: Form): Form {
+    return JSON.parse(JSON.stringify(form));
   }
 
   protected handleInputUpdate(data: Record<string, any>) {
@@ -198,16 +221,15 @@ export default class TrainingSheetView extends Vue {
     });
   }
 
-  protected generateDaysOfWeek(): void {
-    if (!this.trainingSheetSettings) {
-      console.warn('Training sheet settings not loaded yet');
+  protected generateDaysOfWeek(today: Date | null = null): void {
+    if (!this.trainingSheetSettings?.dayOfWeekInTable) {
+      console.warn('dayOfWeekInTable not loaded yet');
       return;
     }
 
-    const days: string[] = [];
-    const dates: Date[] = [];
+    const dateOfWeekList: { displayDate: string, date: Date }[] = [];
 
-    const today = new Date();
+    today = today ?? new Date();
     const mondayDate = DateHelper.getStartDayOfWeekDateByDate(today.toISOString().split('T')[0]);
 
     if (!mondayDate) {
@@ -219,14 +241,16 @@ export default class TrainingSheetView extends Vue {
     Object.entries(this.trainingSheetSettings['dayOfWeekInTable']).forEach(([index, value]) => {
       if (value) {
         const valueDate = this.daysOfWeekMap[index] + " " + date.toDateString();
-        days.push(date.toDateString() === today.toDateString() ? `<b>${valueDate}</b>` : valueDate);
-        dates.push(new Date(date));
+
+        dateOfWeekList.push({
+          displayDate: date.toDateString() === today?.toDateString() ? `<b>${valueDate}</b>` : valueDate,
+          date: new Date(date)
+        })
       }
       date.setDate(date.getDate() + 1);
     });
 
-    this.daysOfWeek = days;
-    this.datesOfWeek = dates;
+    this.dateOfWeekList = dateOfWeekList;
   }
 
   protected generateTimeList(): void {
@@ -261,15 +285,15 @@ export default class TrainingSheetView extends Vue {
       return;
     }
 
-    this.modalForm.labels['endDate'].hidden = !!(data.always || data.always === undefined);
+    this.modalForm.labels['end_date'].hidden = !!(data.always || data.always === undefined);
+
   }
 
   protected setSelectedWeekDateInterval(dateInterval: { startDate: Date, endDate: Date }): void {
+    if (dateInterval.startDate) {
+      this.generateDaysOfWeek(dateInterval.startDate)
+    }
     this._selectedDateInterval = dateInterval;
-  }
-
-  protected get selectedWeekDateInterval(): { startDate: Date | null, endDate: Date | null } {
-    return this._selectedDateInterval;
   }
 
   async mounted() {
@@ -296,12 +320,21 @@ export default class TrainingSheetView extends Vue {
 
   & > div {
     border: 1px solid var(--black);
-    background-color: #28a745;
   }
 
   .table-row {
     display: flex;
     flex-direction: row;
+  }
+
+  .time-column-cell {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 .15rem;
+
+    .info:hover {
+      cursor: help;
+    }
   }
 
   .column {
@@ -313,10 +346,13 @@ export default class TrainingSheetView extends Vue {
     .cell {
       border-top: 1px solid var(--black);
       border-bottom: 1px solid var(--black);
+      height: 25px;
+      transition: .1s;
 
       &.action-cell:hover {
         cursor: pointer;
         font-weight: bold;
+        background-color: var(--black);
       }
     }
   }

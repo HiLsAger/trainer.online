@@ -1,6 +1,6 @@
 <template>
   <div :class="[label.error ? 'validate-error' : '', 'row']">
-    <label :for="label.title">{{ label.title }}</label>
+    <label v-if="label?.title" :for="label.title">{{ label.title }}</label>
     <input
         :id="name"
         :name="name"
@@ -31,6 +31,20 @@ export default class Checkbox extends BaseField {
     const inputElement = event.target as HTMLInputElement;
 
     this.$emit("handleInput", inputElement.checked);
+  }
+
+  protected triggerInitialInput(): void {
+    if (this.labelValue === undefined) {
+      return;
+    }
+
+    const fakeEvent = {
+      target: {
+        checked: this.labelValue
+      }
+    } as unknown as Event;
+
+    this.handleInput(fakeEvent);
   }
 }
 </script>

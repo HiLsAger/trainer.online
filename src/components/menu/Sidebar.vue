@@ -176,10 +176,6 @@ export default class SidebarComponent extends Vue {
       i {
         margin: auto;
       }
-
-      span {
-        display: none;
-      }
     }
   }
 

@@ -1,6 +1,6 @@
 <template>
   <div :class="[(label.error ? 'validate-error' : ''), 'color-picker-field']">
-    <label :for="label.title">{{ label.title }}</label>
+    <label v-if="label?.title" :for="label.title">{{ label.title }}</label>
     <div class="input-container">
       <button
           class="color-picker-btn"
