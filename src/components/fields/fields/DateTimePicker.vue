@@ -1,44 +1,36 @@
 <template>
   <div :class="label.error ? 'validate-error' : ''">
     <label v-if="label?.title" :for="label.title">{{ label.title }}</label>
-
     <input
         :id="name"
         :name="name"
         :required="label.required"
         :placeholder="label.placeholder"
         type="text"
-        :value="formattedValue"
+        :value="formattedValue()"
         readonly
         ref="inputRef"
         @click="togglePicker"
     />
-
     <div v-if="label.error" class="validate-message">
       <span>{{ label.error }}</span>
     </div>
-
     <div v-if="showPicker" class="dropdown-picker" ref="pickerRef">
       <div class="picker-header">
         <button
             class="nav-button"
             @click="previousStep"
             :disabled="currentStepIndex === 0"
-        >
-          ←
+        >←
         </button>
-
         <h3 class="picker-title">{{ currentStepTitle }}</h3>
-
         <button
             class="nav-button"
             @click="nextStep"
             :disabled="currentStepIndex === availableSteps.length - 1 && !canProceed"
-        >
-          →
+        >→
         </button>
       </div>
-
       <div class="picker-body">
         <!-- decade -->
         <div v-if="currentStep === 'decade'" class="decade-selection">
@@ -52,7 +44,6 @@
             {{ decade }} - {{ decade + 9 }}
           </div>
         </div>
-
         <!-- year -->
         <div v-if="currentStep === 'year'" class="year-selection">
           <div
@@ -61,11 +52,9 @@
               class="selection-item"
               :class="{ selected: selectedYear === year }"
               @click="selectYear(year)"
-          >
-            {{ year }}
+          >{{ year }}
           </div>
         </div>
-
         <!-- month -->
         <div v-if="currentStep === 'month'" class="month-selection">
           <div
@@ -74,11 +63,9 @@
               class="selection-item"
               :class="{ selected: selectedMonth === index }"
               @click="selectMonth(index)"
-          >
-            {{ month }}
+          >{{ month }}
           </div>
         </div>
-
         <!-- day -->
         <div v-if="currentStep === 'day'" class="day-selection">
           <div class="days-header">
@@ -86,7 +73,6 @@
               {{ day }}
             </span>
           </div>
-
           <div class="days-grid">
             <div
                 v-for="day in calendarDays"
@@ -98,12 +84,10 @@
                 'current-day': day.isCurrentMonth && isCurrentDay(day.date)
               }"
                 @click="day.isCurrentMonth && selectDay(day.date)"
-            >
-              {{ day.date }}
+            >{{ day.date }}
             </div>
           </div>
         </div>
-
         <!-- time -->
         <div v-if="currentStep === 'time'" class="time-selection">
           <div class="time-controls">
@@ -118,7 +102,6 @@
                   @change="validateTime"
               />
             </div>
-
             <div class="time-group" v-if="needsMinutes">
               <label>Минуты:</label>
               <input
@@ -130,7 +113,6 @@
                   @change="validateTime"
               />
             </div>
-
             <div class="time-group" v-if="needsSeconds">
               <label>Секунды:</label>
               <input
@@ -143,7 +125,6 @@
               />
             </div>
           </div>
-
           <div class="time-actions">
             <button class="btn btn-primary" @click="applySelection">
               Применить
@@ -381,7 +362,7 @@ export default class DateTimePicker extends BaseField {
   /**
    * Формирование финальной даты, заполняя маску
    */
-  get formattedValue(): string {
+  formattedValue(): string {
     let value = this.mask;
 
     const map: Record<string, string> = {
@@ -443,7 +424,6 @@ export default class DateTimePicker extends BaseField {
    */
   protected parseValue(value: string): void {
     const regex = this.prepareMaskToRegex(this.mask)
-
     const match = value.match(new RegExp(`^${regex}$`));
 
     if (!match) {
@@ -452,10 +432,8 @@ export default class DateTimePicker extends BaseField {
     }
 
     let index = 1;
-
     const next = (char: string) =>
         this.mask.includes(char) ? Number(match[index++]) : undefined;
-
     const day = next("d");
     const month = next("m");
     const year = next("y");
@@ -528,7 +506,7 @@ export default class DateTimePicker extends BaseField {
    */
   protected emitValue(): void {
     this.handleInput({
-      target: {value: this.formattedValue}
+      target: {value: this.formattedValue()}
     } as unknown as Event);
   }
 

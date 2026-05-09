@@ -1,22 +1,27 @@
 <template>
-  <div class="week-line-content" ref="container">
-    <span class="line"></span>
-    <div class="week-line-items">
+  <div class="week-line-row">
+    <div class="reset">
+      <button class="btn btn-submit" @click="resetToNow">Сбросить</button>
+    </div>
+    <div class="week-line-content" ref="container">
+      <span class="line"></span>
+      <div class="week-line-items">
       <span
           v-for="(week, index) in weekLineList"
           :key="index"
           :ref="el => setWeekRef(el, index)"
           :class="[isCurrentWeek(week) ? 'active' : '']"
       ></span>
-    </div>
-    <div
-        class="week-line-selector"
-        ref="selector"
-        :style="{ left: selectorLeft + 'px' }"
-        @mousedown="startDrag"
-    >
-      <span v-html="currentWeek"></span>
-      <div class="triangle"></div>
+      </div>
+      <div
+          class="week-line-selector"
+          ref="selector"
+          :style="{ left: selectorLeft + 'px' }"
+          @mousedown="startDrag"
+      >
+        <span v-html="currentWeek"></span>
+        <div class="triangle"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -58,14 +63,10 @@ export default class WeekLineComponent extends Vue {
   set currentWeek(week: string) {
     const weekPattern = /^(\d{4})-(0[1-9]|[1-4][0-9]|5[0-3])$/;
 
-    let weekValue: string;
-
     if (week === 'now') {
       const now = new Date();
       const year = now.getFullYear();
-
       const weekNum = this.getWeekNumber(now);
-
       this._currentWeek = {year: year, week: weekNum};
       return
     }
@@ -101,9 +102,19 @@ export default class WeekLineComponent extends Vue {
   }
 
   protected getWeekNumber(date: Date): number {
-    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-    const pastDaysOfYear = (date.getTime() - firstDayOfYear.getTime()) / 86400000;
-    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+    const target = new Date(date.valueOf());
+    const dayNr = (date.getDay() + 6) % 7;
+    target.setDate(target.getDate() - dayNr + 3);
+    const firstThursday = new Date(target.getFullYear(), 0, 4);
+    const firstDayNr = (firstThursday.getDay() + 6) % 7;
+    firstThursday.setDate(firstThursday.getDate() - firstDayNr + 3);
+    const weekNumber =
+        1 + Math.round(
+            (target.getTime() - firstThursday.getTime()) /
+            (7 * 24 * 60 * 60 * 1000)
+        );
+
+    return weekNumber;
   }
 
   protected getMaxWeekInYear(year: number) {
@@ -184,9 +195,10 @@ export default class WeekLineComponent extends Vue {
     endDate.setDate(startDate.getDate() + 6);
 
     const format = (date: Date): string => {
-      const dd = String(date.getDate()).padStart(2, '0');
-      const mm = String(date.getMonth() + 1).padStart(2, '0');
-      const yyyy = date.getFullYear();
+      const dd = String(date.getUTCDate()).padStart(2, '0');
+      const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const yyyy = date.getUTCFullYear();
+
       return `${dd}.${mm}.${yyyy}`;
     };
 
@@ -211,15 +223,12 @@ export default class WeekLineComponent extends Vue {
   }
 
   protected getDateOfISOWeek(week: number, year: number): Date {
-    const simple = new Date(year, 0, 4);
-
-    const dayOfWeek = simple.getDay() || 7;
-
+    const simple = new Date(Date.UTC(year, 0, 4));
+    const dayOfWeek = simple.getUTCDay() || 7;
     const monday = new Date(simple);
-    monday.setDate(simple.getDate() - dayOfWeek + 1);
-
+    monday.setUTCDate(simple.getUTCDate() - dayOfWeek + 1);
     const result = new Date(monday);
-    result.setDate(monday.getDate() + (week - 1) * 7);
+    result.setUTCDate(monday.getUTCDate() + (week - 1) * 7);
 
     return result;
   }
@@ -297,89 +306,110 @@ export default class WeekLineComponent extends Vue {
 </script>
 
 <style lang="scss">
-.week-line-content {
-  position: relative;
+.week-line-row {
+  display: flex;
+  padding-left: .5rem;
+  padding-right: .5rem;
+  gap: .5rem;
 
+  .reset {
+    .btn {
+      border: 2px solid var(--white);
+      color: var(--white);
+      margin: auto;
 
-  .line {
-    width: 100%;
-    height: 3px;
-    position: absolute;
-    top: 13px;
-    background-color: var(--black);
+      &:hover {
+        background-color: var(--white);
+        color: var(--black);
+      }
+    }
   }
 
-  .week-line-items {
-    height: 30px;
-    display: flex;
-    justify-content: space-between;
+  .week-line-content {
+    position: relative;
+    width: 100%;
 
-    span {
-      margin: auto;
-      padding: 5px;
 
-      &.active {
+    .line {
+      width: 100%;
+      height: 3px;
+      position: absolute;
+      top: 13px;
+      background-color: var(--white);
+    }
+
+    .week-line-items {
+      height: 30px;
+      display: flex;
+      justify-content: space-between;
+
+      span {
+        margin: auto;
+        padding: 5px;
+
+        &.active {
+          &::before {
+            content: "";
+            height: 20px;
+            width: 2px;
+            background-color: var(--white);
+            display: block;
+          }
+        }
+
         &::before {
           content: "";
-          height: 20px;
+          height: 10px;
           width: 2px;
-          background-color: var(--black);
+          background-color: var(--white);
           display: block;
         }
-      }
 
-      &::before {
-        content: "";
+        &:hover {
+          cursor: pointer;
+
+          &::before {
+            content: "";
+            height: 20px;
+            width: 2px;
+            background-color: var(--white);
+            display: block;
+          }
+        }
+      }
+    }
+
+    .week-line-selector {
+      font-size: 10px;
+      position: absolute;
+      color: var(--black);
+      background-color: var(--white);
+      padding: .25rem;
+      transition: none;
+      transform: translateX(-50%);
+      user-select: none;
+      -webkit-user-select: none;
+
+      .triangle {
+        position: absolute;
+        display: flex;
+        justify-content: center;
         height: 10px;
-        width: 2px;
-        background-color: var(--black);
-        display: block;
+        top: -9px;
+        width: 100%;
+        margin-left: -.25rem;
+
+        &:before {
+          content: '';
+          display: block;
+          border: 5px solid transparent;
+          border-bottom: 5px solid var(--white);
+        }
       }
 
       &:hover {
-        cursor: pointer;
-
-        &::before {
-          content: "";
-          height: 20px;
-          width: 2px;
-          background-color: var(--black);
-          display: block;
-        }
+        cursor: grab;
       }
-    }
-  }
-
-  .week-line-selector {
-    font-size: 10px;
-    position: absolute;
-    color: var(--white);
-    background-color: var(--black);
-    padding: .25rem;
-    transition: none;
-    transform: translateX(-50%);
-    user-select: none;
-    -webkit-user-select: none;
-
-    .triangle {
-      position: absolute;
-      display: flex;
-      justify-content: center;
-      height: 10px;
-      top: -9px;
-      width: 100%;
-      margin-left: -.25rem;
-
-      &:before {
-        content: '';
-        display: block;
-        border: 5px solid transparent;
-        border-bottom: 5px solid var(--black);
-      }
-    }
-
-    &:hover {
-      cursor: grab;
     }
   }
 }

@@ -21,6 +21,7 @@ import {Label} from '@/utility/interfaces/label.interface';
 import FieldFactory from './factories/Field.factory';
 import {IFieldsComponent} from "@/components/fields/IFieldsComponent.intefrace";
 import Validator from "@/components/fields/Validator";
+import {FieldDataConverterHelper} from "@/components/fields/helpers/FieldDataConverter.helper";
 
 @Options({
   props: {
@@ -62,10 +63,28 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
   }
 
   onFieldInput(name: string, value: string | boolean | number) {
-    this.formData[name.toLowerCase()] = value;
+    this.formData[name.toLowerCase()] = this.prepareValue(value, this.labels[name]);
     this.labels[name].value = value;
     this.validate();
     this.$emit("handleInputFields", this.formData);
+  }
+
+  prepareValue(
+      value: string | boolean | number,
+      label: Label
+  ): string | boolean | number {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const mask = label.options?.mask;
+    const convert = label.options?.convert;
+
+    if (!mask || !convert) {
+      return value;
+    }
+
+    return FieldDataConverterHelper.convertDataTimeValue(mask, convert, value);
   }
 
   created() {

@@ -56,13 +56,13 @@ export default class AxiosHelper {
             });
     }
 
-    public async sendGetRequest(url: string) {
+    public async sendGetRequest(url: string, query: object = {}) {
         if (!this.serverHelper) {
             console.error('Не инициализирован serverHelper')
             return defaultUserGrid;
         }
 
-        return await axios.get(this.serverHelper?.getApiUrl(url), {
+        return await axios.get(this.serverHelper?.getApiUrl(url, query), {
             headers: {'Authorization': this.configHelper?.getSelf().token}
         })
             .then(response => response ? response.data : null)

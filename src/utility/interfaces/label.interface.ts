@@ -43,4 +43,5 @@ export interface registerLabels {
 export interface Options {
     mask?: string;
     startStep?: string;
+    convert?: string
 }
