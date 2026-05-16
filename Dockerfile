@@ -3,10 +3,12 @@ FROM node:20-alpine as build
 
 WORKDIR /app
 
+COPY package.json yarn.lock ./
+RUN yarn install
+
 COPY . .
 
-RUN npm install
-RUN npm run build
+RUN yarn build
 
 FROM nginx:alpine
 

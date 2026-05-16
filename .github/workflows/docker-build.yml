@@ -28,7 +28,8 @@ jobs:
         run: echo "OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Build image
-        run: docker build -f ./docker/dockerfile -t ghcr.io/${OWNER}/trainer-frontend:${{ github.ref_name }} .
+        run: |
+          docker build -t ghcr.io/${OWNER}/trainer-frontend:${{ github.ref_name }} .
 
       - name: Push image
         run: |
