@@ -1,4 +1,4 @@
-export class FieldDataConverterHelper {
+export class ConvertHelper {
     static convertDataTimeValue(
         fromMask: string,
         toMask: string,
@@ -16,9 +16,14 @@ export class FieldDataConverterHelper {
         let regex = "";
         let i = 0;
 
+        const tokens: string[] = [];
+
         while (i < fromMask.length) {
             const char = fromMask[i];
+
             if (map[char]) {
+                tokens.push(char);
+
                 while (fromMask[i + 1] === char) {
                     i++;
                 }
@@ -32,19 +37,19 @@ export class FieldDataConverterHelper {
         }
 
         const match = value.match(new RegExp(`^${regex}$`));
+
         if (!match) {
             return value;
         }
 
-        let index = 1;
         const values: Record<string, string> = {};
-        ["d", "m", "y", "h", "i", "s"].forEach((char) => {
-            if (fromMask.includes(char)) {
-                values[char] = match[index++];
-            }
+
+        tokens.forEach((token, index) => {
+            values[token] = match[index + 1];
         });
 
         let result = toMask;
+
         Object.entries(values).forEach(([key, val]) => {
             result = result.replace(
                 new RegExp(`${key}+`, "g"),

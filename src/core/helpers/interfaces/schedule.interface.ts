@@ -1,7 +1,9 @@
 export interface ScheduleInterface {
     schedule_rule_id: number | null;
     time: string;
-    duration: number;
+    start_date: string;
+    end_date: string;
+    duration: string;
     trainer_name: string;
     training_name: string;
     style: {
@@ -11,4 +13,7 @@ export interface ScheduleInterface {
         css?: string;
     };
     price: number;
+    training_id: number;
+    always: boolean;
+    training_room_id: number;
 }

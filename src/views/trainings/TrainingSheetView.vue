@@ -85,7 +85,8 @@
           :form="modalForm"
           :show="isShowModal"
           @handleInputUpdate="handleInputUpdateModal"
-      />
+      >
+      </ModalComponent>
     </transition>
   </div>
 </template>
@@ -101,6 +102,7 @@ import {ScheduleInterface} from "@/core/helpers/interfaces/schedule.interface";
 import {reactive} from "vue";
 import WeekLineComponent from "@/components/weekline/WeekLine.vue";
 import ToasterHelper from "@/core/helpers/Toaster.helper";
+import {ConvertHelper} from "@/core/helpers/Convert.helper";
 
 @Options({
   components: {FieldsComponent, ModalComponent, WeekLineComponent}
@@ -250,7 +252,7 @@ export default class TrainingSheetView extends Vue {
     const baseStart = Number(this.trainingSheetSettings['startTimeTrainingSheet']);
     const start = this.timeToMinutes(training.time);
     const top = (start - baseStart) * this.pxPerMinute;
-    const height = training.duration * this.pxPerMinute;
+    const height = this.timeToMinutes(training.duration) * this.pxPerMinute;
     return {
       top: `${top}px`,
       height: `${height}px`,
@@ -264,7 +266,7 @@ export default class TrainingSheetView extends Vue {
     const trainings = this.getDaySchedule(date);
     for (const training of trainings) {
       const start = this.timeToMinutes(training.time);
-      const end = start + training.duration;
+      const end = start + this.timeToMinutes(training.duration);
 
       if (Math.abs(currentMinutes - start) <= this.snapDistance) {
         return start;
@@ -299,14 +301,14 @@ export default class TrainingSheetView extends Vue {
   protected hasCollision(
       date: Date,
       startTime: string,
-      duration: number
+      duration: string
   ): boolean {
     const start = this.timeToMinutes(startTime);
-    const end = start + duration;
+    const end = start + this.timeToMinutes(duration);
     return this.getDaySchedule(date)
         .some(training => {
           const itemStart = this.timeToMinutes(training.time);
-          const itemEnd = itemStart + training.duration;
+          const itemEnd = itemStart + this.timeToMinutes(training.duration);
           return (start < itemEnd && end > itemStart);
         });
   }
@@ -323,7 +325,7 @@ export default class TrainingSheetView extends Vue {
       return;
     }
 
-    const duration = 60;
+    const duration = '1:00';
     const selectedDate = new Date(date);
     if (this.hasCollision(selectedDate, this.hoverTime, duration)) {
       this.toasterHelper?.addErrorToast('Это время уже занято')
@@ -346,11 +348,32 @@ export default class TrainingSheetView extends Vue {
     this.formChangeKey++;
   }
 
-  protected editTraining(
+  protected async editTraining(
       training: ScheduleInterface
-  ): void {
+  ): Promise<void> {
+    if (!training.schedule_rule_id) {
+      return this.toasterHelper?.addErrorToast('Не удалось получить тренировку для изменения!');
+    }
 
-    console.log(training);
+    const schedule = await this.getScheduleDataById(training.schedule_rule_id)
+    if (!schedule) {
+      return this.toasterHelper?.addErrorToast('Не удалось получить тренировку для изменения!');
+    }
+
+    const form = JSON.parse(JSON.stringify(this.baseForm));
+    form.title = 'Изменить тренировку';
+    form.labels.training_id.value = schedule.training_id;
+    form.labels.start_time.value = ConvertHelper.convertDataTimeValue('h:i:s', 'h:i', schedule.time);
+    form.labels.duration.value = ConvertHelper.convertDataTimeValue('h:i:s', 'h:i', schedule.duration);
+    form.labels.start_date.value = ConvertHelper.convertDataTimeValue('y-m-d', 'd.m.y', schedule.start_date);
+    form.labels.end_date.value = ConvertHelper.convertDataTimeValue('y-m-d', 'd.m.y', schedule.end_date);
+    form.labels.price.value = schedule.price;
+    form.labels.always.value = schedule.always;
+    // form.labels.training_room_id = schedule.training_room_id;
+
+    this.modalForm = form;
+    this.isShowModal = true;
+    this.formChangeKey++;
   }
 
   protected setSelectedWeekDateInterval(
@@ -437,7 +460,6 @@ export default class TrainingSheetView extends Vue {
   }
 
   protected async loadSchedule(): Promise<void> {
-
     if (!this.axiosHelper) {
       return;
     }
@@ -450,7 +472,7 @@ export default class TrainingSheetView extends Vue {
     }
 
     const data = await this.axiosHelper.sendGetRequest(
-        'schedules/schedule',
+        'schedules/schedule-list',
         {
           start_date: firstDate.toISOString().slice(0, 10),
           end_date: lastDate.toISOString().slice(0, 10),
@@ -464,6 +486,16 @@ export default class TrainingSheetView extends Vue {
           this.schedule[key] = value;
         }
     );
+  }
+
+  protected async getScheduleDataById(id: number): Promise<ScheduleInterface | null> {
+    if (!this.axiosHelper) {
+      return null;
+    }
+
+    return await this.axiosHelper.sendGetRequest(
+        `schedules/schedule/${id}`
+    ) as ScheduleInterface;
   }
 
   async mounted(): Promise<void> {
@@ -591,7 +623,7 @@ export default class TrainingSheetView extends Vue {
   position: absolute;
   left: 5%;
   width: 90%;
-  padding: 10px;
+  padding-left: 5px;
   box-sizing: border-box;
   overflow: hidden;
   z-index: 10;

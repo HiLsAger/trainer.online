@@ -21,7 +21,7 @@ import {Label} from '@/utility/interfaces/label.interface';
 import FieldFactory from './factories/Field.factory';
 import {IFieldsComponent} from "@/components/fields/IFieldsComponent.intefrace";
 import Validator from "@/components/fields/Validator";
-import {FieldDataConverterHelper} from "@/components/fields/helpers/FieldDataConverter.helper";
+import {ConvertHelper} from "@/core/helpers/Convert.helper";
 
 @Options({
   props: {
@@ -84,7 +84,7 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
       return value;
     }
 
-    return FieldDataConverterHelper.convertDataTimeValue(mask, convert, value);
+    return ConvertHelper.convertDataTimeValue(mask, convert, value);
   }
 
   created() {
