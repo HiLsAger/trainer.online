@@ -4,9 +4,11 @@ import {RouteRecordRaw} from "vue-router";
 const settingsRoutes: Array<RouteRecordRaw> = [
     {
         path: "/settings",
-        name: "settings",
+        name: "Настройки",
         meta: {
-            bootstrapIconClass: "bi-gear-fill",
+            sidebar: true,
+            bootstrapIconClass: "bi bi-gear-fill",
+            tooltip: 'Настройки',
             title: 'Настройки'
         },
         component: SettingsView,

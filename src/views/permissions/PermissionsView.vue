@@ -4,6 +4,7 @@
         :key="gridScore"
         :table-body="itemsList.body"
         :table-head="itemsList.head"
+        :options="itemsList.options"
         @rowActionData="handleForm"
         @rowUpdate="handleGridUpdate"
     >
@@ -43,7 +44,8 @@ export default class PermissionsView extends Vue {
   };
   itemsList: Grid = {
     head: [],
-    body: []
+    body: [],
+    options: {page: 0, limit: 0, countPage: 0}
   };
   formChangeKey: number = 0;
   gridScore = 0;
@@ -64,14 +66,14 @@ export default class PermissionsView extends Vue {
     this.formChangeKey++;
   }
 
-  async loadData() {
+  async loadData(page: number = 1) {
     if (this.api && this.api.users) {
-      this.itemsList = await this.api.permissions?.getPermissionsGrid() ?? defaultUserGrid
+      this.itemsList = await this.api.permissions?.getPermissionsGrid(10, page) ?? defaultUserGrid
     }
   }
 
-  async handleGridUpdate() {
-    await this.loadData()
+  async handleGridUpdate(page: number = 1) {
+    await this.loadData(page)
 
     this.gridScore++;
   }

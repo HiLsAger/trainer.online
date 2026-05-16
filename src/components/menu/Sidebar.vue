@@ -9,10 +9,12 @@
           <SidebarItemsComponent :routes="sidebarRoutes"/>
         </ul>
       </nav>
-      <router-link :to="{ name: 'settings' }" class="settings">
-        <i :class="['bi', BootstrapIconClass(settingsRoute)]"></i>
-        <span>Параметры</span>
-      </router-link>
+      <div class="bottom-menu">
+        <router-link :to="{ name: 'logout' }" class="logout nav-link">
+          <i :class="['bi', BootstrapIconClass(getRoute('logout'))]"></i>
+          <span>Выйти из аккаунта</span>
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -38,11 +40,11 @@ export default class SidebarComponent extends Vue {
     return this.hidden ? 'bi-arrow-bar-right' : 'bi-arrow-bar-left';
   }
 
-  get settingsRoute(): RouteLocationNormalizedLoaded | null {
+  getRoute(routeName: string): RouteLocationNormalizedLoaded | null {
     return (this
         .$router
         .getRoutes()
-        .find(route => route.name === 'settings') || null) as RouteLocationNormalizedLoaded | null;
+        .find(route => route.name === routeName) || null) as RouteLocationNormalizedLoaded | null;
   }
 
   BootstrapIconClass(route: RouteRecordRaw | RouteLocationNormalizedLoaded | null) {
@@ -112,8 +114,13 @@ export default class SidebarComponent extends Vue {
       }
     }
 
-    .settings, .nav-link {
+    .bottom-menu {
       margin-top: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-link {
       text-align: left;
       color: var(--white);
       text-decoration: none;
@@ -150,8 +157,6 @@ export default class SidebarComponent extends Vue {
     background-color: var(--black);
     outline: none;
     z-index: 10;
-    border-bottom: 2px solid var(--white);
-    border-left: 2px solid var(--white);
   }
 
   .resize-sidebar:hover {
@@ -170,10 +175,6 @@ export default class SidebarComponent extends Vue {
 
       i {
         margin: auto;
-      }
-
-      span {
-        display: none;
       }
     }
   }

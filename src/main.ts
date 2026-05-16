@@ -6,6 +6,7 @@ import settingsData from "./configs/settings.json";
 import Settings from "./utility/interfaces/settings.interface";
 import ApiFacade from "@/core/api/Api.facade";
 import TooltipDirective from "@/components/directives/tooltip/Tooltip.vue";
+import VueCookies from 'vue-cookies';
 
 store.dispatch("initializeStore");
 
@@ -15,4 +16,4 @@ ApiFacade.getInstance();
 app.provide('$settings', settingsData as Settings)
 app.config.globalProperties.$store = store;
 app.directive('tooltip', TooltipDirective)
-app.use(store).use(router).mount("#app");
+app.use(store).use(router).use(VueCookies).mount("#app");

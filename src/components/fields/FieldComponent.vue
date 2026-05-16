@@ -1,10 +1,13 @@
 <template>
   <div class="form-fields">
-    <div class="form-field" v-for="(label, index) in localLabels" :key="label.error">
+    <div :class="[isHorizontal ? 'form-field-horizontal' : '', 'form-field']" v-for="(label, index) in localLabels"
+         :key="label.error">
       <component
           :is="getComponent(label)"
           :name="index"
           :label="label"
+          :alias="alias"
+          v-if="!label.hidden"
           @handleInput="onFieldInput(index, $event)"
       />
     </div>
@@ -18,6 +21,7 @@ import {Label} from '@/utility/interfaces/label.interface';
 import FieldFactory from './factories/Field.factory';
 import {IFieldsComponent} from "@/components/fields/IFieldsComponent.intefrace";
 import Validator from "@/components/fields/Validator";
+import {ConvertHelper} from "@/core/helpers/Convert.helper";
 
 @Options({
   props: {
@@ -25,12 +29,23 @@ import Validator from "@/components/fields/Validator";
       type: Object,
       required: true,
     },
+    alias: {
+      type: String,
+      required: false
+    },
+    isHorizontal: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
   },
 })
 export default class FieldsComponent extends Vue implements IFieldsComponent {
   labels!: { [key: string]: Label };
+  alias!: string;
+  isHorizontal!: boolean;
   localLabels?: { [key: string]: Label };
-  formData: Record<string, string> = {};
+  formData: Record<string, string | boolean | number> = {};
 
   validator?: Validator;
 
@@ -47,12 +62,29 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
     return FieldFactory.getInstance().createField(label);
   }
 
-  onFieldInput(name: string, value: string) {
-    this.formData[name.toLowerCase()] = value;
+  onFieldInput(name: string, value: string | boolean | number) {
+    this.formData[name.toLowerCase()] = this.prepareValue(value, this.labels[name]);
     this.labels[name].value = value;
     this.validate();
-    console.log(this.formData)
     this.$emit("handleInputFields", this.formData);
+  }
+
+  prepareValue(
+      value: string | boolean | number,
+      label: Label
+  ): string | boolean | number {
+    if (typeof value !== "string") {
+      return value;
+    }
+
+    const mask = label.options?.mask;
+    const convert = label.options?.convert;
+
+    if (!mask || !convert) {
+      return value;
+    }
+
+    return ConvertHelper.convertDataTimeValue(mask, convert, value);
   }
 
   created() {
@@ -67,12 +99,14 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
 
 <style lang="scss">
 .form-field {
+  position: relative;
+
   div {
     display: flex;
     flex-direction: column;
     margin-top: 1em;
 
-    input, select {
+    input, select, textarea, .custom-field {
       background-color: transparent;
       color: var(--black);
       outline: none;
@@ -97,6 +131,11 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
 
     .validate-message {
       margin-top: 0;
+    }
+
+    &.row {
+      display: flex;
+      flex-direction: row;
     }
 
     &.validate-error {

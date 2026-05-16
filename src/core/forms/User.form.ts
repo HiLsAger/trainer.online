@@ -35,7 +35,6 @@ const userForm: Form = {
             list: 'fields/roles',
             title: 'Статус',
             type: 'text',
-
         }
     },
     action: 'users/user',

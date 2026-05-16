@@ -6,14 +6,16 @@
         <td v-for="item in tableHead">{{ item }}</td>
       </tr>
       <tr v-if="tableFilters">
-
       </tr>
       </thead>
       <tbody :class="gridOptions?.classParams.tBodyClass">
       <tr v-for="row in tableBody"
           @click="onRowClick(row.actions.rowActionUrl ?? '')">
         <td v-for="item in row.columns">
-          <template v-if="typeof item === 'string' || typeof item === 'number'">{{ item }}</template>
+          <template v-if="typeof item === 'string' || typeof item === 'number'">
+            <span v-if="isHtml(item)" v-html="item"></span>
+            <span v-else>{{ item }}</span>
+          </template>
           <div class="action-links">
             <template v-for="(element, index) in item" :key="index">
               <a
@@ -39,6 +41,14 @@
       <tfoot :class="gridOptions?.classParams.tFootClass"></tfoot>
       <caption v-if="caption">{{ caption }}}</caption>
     </table>
+    <div class="pagination">
+      <button
+          v-for="page in pages"
+          :class="[page === options.page ? 'active' : '', 'btn btn-submit']"
+          @click="handleChangePage(page)"
+      >{{ page }}
+      </button>
+    </div>
     <ConfirmModalComponent
         :show="isShowModal"
         :text="modalText"
@@ -53,7 +63,7 @@
 import {Options, Vue} from "vue-class-component";
 import CellFilter from "@/components/grid/interfaces/CellFilter";
 import {GridOptions} from "@/components/grid/interfaces/GridOptions";
-import {Action, TableBody} from "@/utility/interfaces/grid.interface";
+import {Action, GridParamOptions, TableBody} from "@/utility/interfaces/grid.interface";
 import AxiosHelper from "@/core/helpers/Axios.helper";
 import {useStore} from "vuex";
 import ConfirmModalComponent from "@/components/modal/ConfirmModal.vue";
@@ -75,6 +85,10 @@ import {Ref} from "vue";
       type: Array as () => TableBody[],
       required: true,
     },
+    options: {
+      type: Object,
+      required: false
+    },
     gridOptions: {
       type: Object as () => GridOptions,
       required: false
@@ -89,6 +103,7 @@ export default class GridComponent extends Vue {
   tableHead!: string[];
   tableFilters!: CellFilter[];
   tableBody!: (string | number)[][];
+  options!: GridParamOptions;
   gridOptions!: GridOptions;
   caption!: string;
 
@@ -103,6 +118,23 @@ export default class GridComponent extends Vue {
 
   get modalText(): Ref<string> {
     return this.modal.modalText;
+  }
+
+  get pages(): number[] {
+    if (!this.options) {
+      return [];
+    }
+
+    let pages = [];
+    for (let i = 1; i <= this.options.countPage; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  }
+
+  isHtml(value: string | number): boolean {
+    return typeof value === 'string' && /<[a-z][\s\S]*>/i.test(value);
   }
 
   ask = async (text: string) => this.modal.ask(text);
@@ -149,6 +181,10 @@ export default class GridComponent extends Vue {
         'rowUpdate',
         data
     );
+  }
+
+  handleChangePage(page: number): void {
+    this.update(page)
   }
 
   async mounted() {
@@ -209,6 +245,22 @@ export default class GridComponent extends Vue {
         background-color: var(--table-row-hover);
         cursor: pointer;
       }
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: end;
+
+  button {
+    margin: .25rem;
+  }
+
+  .btn {
+    &.active {
+      background-color: var(--black);
+      color: var(--white);
     }
   }
 }

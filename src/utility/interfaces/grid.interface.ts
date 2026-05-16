@@ -1,6 +1,7 @@
 export interface Grid {
     head: (string | number)[] | null;
     body: TableBody[] | null;
+    options: GridParamOptions
 }
 
 export interface TableBody {
@@ -18,4 +19,10 @@ export interface Action {
     icon?: string | null;
     method: string;
     confirm?: string;
+}
+
+export interface GridParamOptions {
+    countPage: number;
+    limit: number;
+    page: number;
 }

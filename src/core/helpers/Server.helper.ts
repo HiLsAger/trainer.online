@@ -26,13 +26,30 @@ export default class ServerHelper {
     }
 
 
-    public getApiUrl(page: string): string {
+    public getApiUrl(page: string, query: object = {}): string {
         let settings = this.configHelper?.getSettings();
-        if (!settings || !settings.apiUrl) {
+        if (!settings || !window.APP_CONFIG.API_URL) {
             throw new Error("Конфигурацию или apiUrl не удалось найти");
         }
 
-        return `${settings.apiUrl}/${page}`;
+        let url = `${window.APP_CONFIG.API_URL}/${page}`;
+
+        if (Object.keys(query).length > 0) {
+            const params = new URLSearchParams();
+
+            for (const [key, value] of Object.entries(query)) {
+                if (value !== undefined && value !== null) {
+                    params.append(key, String(value));
+                }
+            }
+
+            const queryString = params.toString();
+            if (queryString) {
+                url += `?${queryString}`;
+            }
+        }
+
+        return url;
     }
 
     public async getProfile(username: string): Promise<Profile | null> {

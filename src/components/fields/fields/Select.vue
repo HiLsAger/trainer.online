@@ -1,7 +1,7 @@
 <template>
   <div :class="label.error ? 'validate-error' : ''">
-    <label :for="label.title">{{ label.title }}</label>
-    <select :value="label?.value" @change="handleInput">
+    <label v-if="label?.title" :for="label.title">{{ label.title }}</label>
+    <select :value="labelValue" @change="handleInput">
       <option v-for="(value, index) in list" :value="index">{{ value }}</option>
     </select>
     <div v-if="label.error" class="validate-message"><span>{{ label.error }}</span></div>
@@ -17,11 +17,11 @@ import BaseField from "@/components/fields/fields/BaseField";
 @Options({
   props: {
     label: Object as () => Label,
-    name: String
+    name: String,
+    alias: String,
   },
 })
 export default class Select extends BaseField {
-  name!: string;
   list?: object = {};
 
   axiosHelper?: AxiosHelper;
@@ -31,7 +31,7 @@ export default class Select extends BaseField {
 
     if (typeof this.label.list === 'string') {
       this.list = await this.axiosHelper.sendGetRequest(this.label.list)
-    } else if (Array.isArray(this.label?.list)) {
+    } else if (typeof this.label?.list === 'object') {
       this.list = this.label.list;
     }
 

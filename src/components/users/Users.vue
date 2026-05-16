@@ -48,7 +48,8 @@ export default class UsersComponent extends Vue {
   };
   usersList: Grid = {
     head: [],
-    body: []
+    body: [],
+    options: {page: 0, countPage: 0, limit: 0},
   };
   formChangeKey: number = 0;
   gridScore = 0;

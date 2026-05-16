@@ -6,14 +6,16 @@ import pagesRoutes from "./routes/pages/pages.routes";
 import profileRoutes from "./routes/profile/profile.router";
 import trainingsRoutes from "@/modules/router/routes/trainings/trainings.rotes";
 import permissionsRoutes from "@/modules/router/routes/permissions/permissions.routes";
+import stylesRoutes from "@/modules/router/routes/lists/lists.routes";
 
 const routes: Array<RouteRecordRaw> = [
     ...authRoutes,
-    ...permissionsRoutes,
     ...pagesRoutes,
+    ...permissionsRoutes,
     ...profileRoutes,
+    ...trainingsRoutes,
+    ...stylesRoutes,
     ...settingsRoutes,
-    ...trainingsRoutes
 ];
 
 const router = createRouter({

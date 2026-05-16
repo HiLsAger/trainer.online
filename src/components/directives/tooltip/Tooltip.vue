@@ -29,8 +29,8 @@ export default TooltipDirective;
     max-width: 100px;
     padding: .25em .5em;
     content: attr(data-tooltip);
-    color: var(--textColor, #fff);
-    background: var(--backgroundColor, #000);
+    color: var(--white);
+    background: var(--black, #000);
     font-size: .75em;
     z-index: 9999;
   }

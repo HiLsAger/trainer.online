@@ -1,11 +1,12 @@
 import {RouteRecordRaw} from "vue-router";
-import EmptyView from "@/views/EmptyView.vue";
+import TrainingsView from "@/views/trainings/TrainingsView.vue";
+import RoomsView from "@/views/trainings/RoomsView.vue";
+import TrainingSheetView from "@/views/trainings/TrainingSheetView.vue";
 
 const trainingsRoutes: Array<RouteRecordRaw> = [
     {
-        path: "",
+        path: "/trainings",
         name: "Тренировки",
-        component: EmptyView,
         meta: {
             sidebar: true,
             bootstrapIconClass: "bi bi-calendar-event-fill",
@@ -16,7 +17,7 @@ const trainingsRoutes: Array<RouteRecordRaw> = [
             {
                 path: "/training-sheet",
                 name: "Доска тренеровок",
-                component: EmptyView,
+                component: TrainingSheetView,
                 meta: {
                     sidebar: true,
                     bootstrapIconClass: "",
@@ -25,40 +26,27 @@ const trainingsRoutes: Array<RouteRecordRaw> = [
                 },
             },
             {
-                path: "",
-                name: "Настройки тренеровок",
-                component: EmptyView,
+                path: "/trainings",
+                name: "Список тренеровок",
+                component: TrainingsView,
                 meta: {
                     sidebar: true,
                     bootstrapIconClass: "",
-                    tooltip: 'Настройки тренеровок',
-                    title: 'Настройки тренеровок'
+                    tooltip: 'Список тренеровок11',
+                    title: 'Список тренеровок'
                 },
-                children: [
-                    {
-                        path: "/trainings",
-                        name: "Тренеровки",
-                        component: EmptyView,
-                        meta: {
-                            sidebar: true,
-                            bootstrapIconClass: "",
-                            tooltip: 'Тренеровки',
-                            title: 'Тренеровки'
-                        },
-                    },
-                    {
-                        path: "/rooms",
-                        name: "Залы",
-                        component: EmptyView,
-                        meta: {
-                            sidebar: true,
-                            bootstrapIconClass: "",
-                            tooltip: 'Залы',
-                            title: 'Залы'
-                        },
-                    },
-                ]
-            }
+            },
+            {
+                path: "/rooms",
+                name: "Залы",
+                component: RoomsView,
+                meta: {
+                    sidebar: true,
+                    bootstrapIconClass: "",
+                    tooltip: 'Залы',
+                    title: 'Залы'
+                },
+            },
         ]
     },
 ];

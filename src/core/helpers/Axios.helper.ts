@@ -1,25 +1,38 @@
 import ServerHelper from "@/core/helpers/Server.helper";
 import ConfigHelper from "@/core/helpers/Config.helper";
 import {defaultUserGrid} from "@/core/models/User";
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import store from "@/modules/vuex/store";
+import {ErrorMessageInterface} from "@/utility/interfaces/errorMessage.interface";
+import ToasterHelper from "@/core/helpers/Toaster.helper";
 
 export default class AxiosHelper {
-    private static instance: AxiosHelper | null = null;
+    private static instance: AxiosHelper;
 
-    protected serverHelper: ServerHelper | null = null;
+    protected serverHelper: ServerHelper;
 
-    protected configHelper: ConfigHelper | null = null;
+    protected configHelper: ConfigHelper;
 
-    private async init(): Promise<void> {
-        this.serverHelper = await ServerHelper.getInstance();
-        this.configHelper = await ConfigHelper.getInstance();
+    protected toasterHelper: ToasterHelper;
+
+    constructor(
+        serverHelper: ServerHelper,
+        configHelper: ConfigHelper,
+        toasterHelper: ToasterHelper
+    ) {
+        this.serverHelper = serverHelper;
+        this.configHelper = configHelper;
+        this.toasterHelper = toasterHelper;
     }
 
     public static async getInstance(): Promise<AxiosHelper> {
         if (!AxiosHelper.instance) {
-            AxiosHelper.instance = new AxiosHelper();
-            AxiosHelper.instance.init();
+            const [serverHelper, configHelper, toasterHelper] = await Promise.all([
+                ServerHelper.getInstance(),
+                ConfigHelper.getInstance(),
+                ToasterHelper.getInstance()
+            ]);
+            AxiosHelper.instance = new AxiosHelper(serverHelper, configHelper, toasterHelper);
         }
 
         return this.instance as AxiosHelper;
@@ -43,13 +56,13 @@ export default class AxiosHelper {
             });
     }
 
-    public async sendGetRequest(url: string) {
+    public async sendGetRequest(url: string, query: object = {}) {
         if (!this.serverHelper) {
             console.error('Не инициализирован serverHelper')
             return defaultUserGrid;
         }
 
-        return await axios.get(this.serverHelper?.getApiUrl(url), {
+        return await axios.get(this.serverHelper?.getApiUrl(url, query), {
             headers: {'Authorization': this.configHelper?.getSelf().token}
         })
             .then(response => response ? response.data : null)
@@ -64,7 +77,7 @@ export default class AxiosHelper {
             console.error('Не инициализирован serverHelper')
             return defaultUserGrid;
         }
-        console.log(data)
+
         return await axios.post(this.serverHelper.getApiUrl(url), data, {
             headers: {'Authorization': this.configHelper?.getSelf().token}
         })
@@ -77,8 +90,17 @@ export default class AxiosHelper {
 
                 return response ? response.data : null
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((error: AxiosError) => {
+                if (!error.response) {
+                    return null
+                }
+
+                if (error.response.data) {
+                    this.toasterHelper.addErrorToast((error.response.data as ErrorMessageInterface).message);
+                    return null
+                }
+
+                this.toasterHelper.addErrorToast(error.response.statusText);
                 return null;
             });
     }

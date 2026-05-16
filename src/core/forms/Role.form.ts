@@ -1,5 +1,11 @@
 import {Form} from "@/utility/interfaces/label.interface";
 
+const typeList: Record<number, string> = {
+    0: "Без роли",
+    1: "Тренер",
+    2: "Менеджер",
+};
+
 const roleForm: Form = {
     labels: {
         name: {
@@ -14,6 +20,14 @@ const roleForm: Form = {
             placeholder: "Описание",
             type: "text",
             templateType: 'text'
+        },
+        type: {
+            title: "Тип",
+            placeholder: "Тип",
+            type: "text",
+            templateType: 'select',
+            value: 0,
+            list: typeList,
         },
         permissions: {
             title: "Права",
