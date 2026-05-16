@@ -29,7 +29,10 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t ghcr.io/${OWNER}/trainer-frontend:${{ github.ref_name }} .
+          docker build \
+            -f docker/dockerfile \
+            -t ghcr.io/${OWNER}/trainer-frontend:${{ github.ref_name }} \
+            .
 
       - name: Push image
         run: |
