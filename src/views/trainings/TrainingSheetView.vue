@@ -4,7 +4,6 @@
       <div class="select-room">
         <FieldsComponent
             :key="fieldsCounter"
-            ref="fieldsComponentRef"
             :labels="filterForm.labels"
             :alias="filterForm.alias"
             @handleInputFields="handleInputUpdate"
@@ -48,8 +47,11 @@
                   :class="{today: isToday(date.date)}"
                   v-for="date in dateOfWeekList"
                   :key="date.date.toISOString()"
-                  v-html="date.displayDate"
-              />
+              >
+                <router-link
+                    :to="'/training-list/' + selectedTrainingRoomId + '/' + date.date.toISOString().slice(0, 10)"
+                    v-html="date.displayDate"/>
+              </div>
             </div>
             <div class="days-body" :style="{ height: schedulerHeight + 'px' }">
               <div
@@ -217,7 +219,11 @@ export default class TrainingSheetView extends Vue {
   };
 
   protected get isSelectTrainingRoom(): boolean {
-    return !!this.formData['training_room_id'];
+    return !!this.selectedTrainingRoomId;
+  }
+
+  protected get selectedTrainingRoomId(): number | null {
+    return this.formData['training_room_id'] ?? null;
   }
 
   protected isToday(date: Date): boolean {
@@ -342,7 +348,7 @@ export default class TrainingSheetView extends Vue {
     form.labels.start_time.value = startTime;
     form.labels.start_date.value = currentDate;
     form.labels.end_date.value = currentDate;
-    form.labels.training_room_id.value = this.formData['training_room_id'];
+    form.labels.training_room_id.value = this.selectedTrainingRoomId;
     this.modalForm = form;
     this.isShowModal = true;
     this.formChangeKey++;
@@ -467,7 +473,7 @@ export default class TrainingSheetView extends Vue {
     const firstDate = this.dateOfWeekList[0]?.date;
     const lastDate = this.dateOfWeekList[this.dateOfWeekList.length - 1]?.date;
 
-    if (!firstDate || !lastDate || !this.formData['training_room_id']) {
+    if (!firstDate || !lastDate || !this.selectedTrainingRoomId) {
       return;
     }
 
@@ -476,7 +482,7 @@ export default class TrainingSheetView extends Vue {
         {
           start_date: firstDate.toISOString().slice(0, 10),
           end_date: lastDate.toISOString().slice(0, 10),
-          training_room_id: this.formData['training_room_id']
+          training_room_id: this.selectedTrainingRoomId
         }
     ) as Record<string, ScheduleInterface[]>;
 
@@ -572,6 +578,10 @@ export default class TrainingSheetView extends Vue {
   padding-top: 10px;
   border-left: 1px solid rgba(255, 255, 255, .08);
   font-weight: bold;
+
+  a {
+    color: var(--white);
+  }
 
   .today {
     color: red;

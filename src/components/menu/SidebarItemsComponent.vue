@@ -1,7 +1,7 @@
 <template>
   <template v-for="route in routes">
     <li :key="route.name" v-if="route.meta && route.meta.sidebar">
-      <a v-if="route.children"
+      <a v-if="route.children && hasVisibleChildren(route.children)"
          class="nav-link"
          href="#"
          v-tooltip="route.meta.tooltip"
@@ -47,7 +47,7 @@ export default class SidebarItemsComponent extends Vue {
   openStates: Record<string, boolean> = {};
 
   isOpen(routeName: string): boolean {
-    return !!this.openStates[routeName];
+    return this.openStates[routeName];
   }
 
   toggle(routeName: string) {
@@ -58,6 +58,14 @@ export default class SidebarItemsComponent extends Vue {
     return route && route.meta && route.meta.bootstrapIconClass
         ? route.meta.bootstrapIconClass
         : 'bi-caret-right-fill';
+  }
+
+  hasVisibleChildren(children: RouteRecordRaw[]): boolean {
+    if (!children || children.length === 0) return false;
+
+    return children.some(child =>
+        child.meta && child.meta.sidebar === true
+    );
   }
 }
 </script>

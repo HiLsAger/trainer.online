@@ -1,7 +1,10 @@
 <template>
-  <div class="form-fields">
-    <div :class="[isHorizontal ? 'form-field-horizontal' : '', 'form-field']" v-for="(label, index) in localLabels"
-         :key="label.error">
+  <div class="form-fields" :style="{'display': isHorizontal ? 'flex' : 'block'}">
+    <div :class="[isHorizontal ? 'form-field-horizontal' : '', 'form-field']"
+         v-for="(label, index) in localLabels"
+         :key="label.error"
+         :style="getStyles(label)"
+    >
       <component
           :is="getComponent(label)"
           :name="index"
@@ -62,6 +65,15 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
     return FieldFactory.getInstance().createField(label);
   }
 
+  protected getStyles(label: Label): object {
+    let styles: { width?: string, display?: string } = {};
+
+    styles.display = this.isHorizontal ? 'flex' : 'block';
+    styles.width = label.width ?? "100%";
+
+    return styles;
+  }
+
   onFieldInput(name: string, value: string | boolean | number) {
     this.formData[name.toLowerCase()] = this.prepareValue(value, this.labels[name]);
     this.labels[name].value = value;
@@ -98,62 +110,71 @@ export default class FieldsComponent extends Vue implements IFieldsComponent {
 </script>
 
 <style lang="scss">
-.form-field {
-  position: relative;
+.form-fields {
+  width: 100%;
+  gap: 5px;
 
-  div {
-    display: flex;
-    flex-direction: column;
-    margin-top: 1em;
+  .form-field {
+    position: relative;
 
-    input, select, textarea, .custom-field {
-      background-color: transparent;
-      color: var(--black);
-      outline: none;
-      border: none;
-      border-bottom: 2px solid var(--black);
-      font-size: 1em;
-      padding: 0;
-
-      &:hover {
-        color: var(--hover-color);
-
-        &::placeholder {
-          color: var(--hover-color);
-        }
-      }
+    & > div {
+      width: 100%;
     }
 
-    label {
-      text-align: left;
-      font-size: 1em;
-    }
-
-    .validate-message {
-      margin-top: 0;
-    }
-
-    &.row {
+    div {
       display: flex;
-      flex-direction: row;
-    }
+      flex-direction: column;
+      margin-top: 1em;
 
-    &.validate-error {
-      input {
-        border-bottom: 2px solid var(--danger);
-        color: var(--danger);
+      input, select, textarea, .custom-field {
+        background-color: transparent;
+        color: var(--black);
+        outline: none;
+        border: none;
+        border-bottom: 2px solid var(--black);
+        font-size: 1em;
+        padding: 0;
 
-        &::placeholder {
-          color: var(--danger);
+        &:hover {
+          color: var(--hover-color);
+
+          &::placeholder {
+            color: var(--hover-color);
+          }
         }
       }
 
       label {
-        color: var(--danger);
+        text-align: left;
+        font-size: 1em;
       }
 
       .validate-message {
-        color: var(--danger);
+        margin-top: 0;
+      }
+
+      &.row {
+        display: flex;
+        flex-direction: row;
+      }
+
+      &.validate-error {
+        input {
+          border-bottom: 2px solid var(--danger);
+          color: var(--danger);
+
+          &::placeholder {
+            color: var(--danger);
+          }
+        }
+
+        label {
+          color: var(--danger);
+        }
+
+        .validate-message {
+          color: var(--danger);
+        }
       }
     }
   }

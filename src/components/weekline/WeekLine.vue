@@ -281,7 +281,6 @@ export default class WeekLineComponent extends Vue {
         targetEl.offsetLeft + targetEl.offsetWidth / 2;
 
     this._currentWeek = this.weekLineList[closestIndex];
-    this.emitWeek();
   };
 
   protected stopDrag = () => {
@@ -289,6 +288,8 @@ export default class WeekLineComponent extends Vue {
 
     window.removeEventListener('mousemove', this.onDrag);
     window.removeEventListener('mouseup', this.stopDrag);
+
+    this.emitWeek()
   };
 
   mounted() {

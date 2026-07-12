@@ -639,6 +639,10 @@ export default class DateTimePicker extends BaseField {
   cursor: pointer;
 }
 
+.form-fields .form-field .dropdown-picker .picker-body div {
+  display: grid;
+}
+
 .dropdown-picker {
   position: absolute;
   top: 100%;
@@ -656,7 +660,7 @@ export default class DateTimePicker extends BaseField {
     padding: 10px;
     border-bottom: 1px solid var(--black);
     background: var(--white);
-    flex-direction: row;
+    flex-direction: row !important;
   }
 
   .picker-title {

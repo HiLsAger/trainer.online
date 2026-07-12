@@ -19,10 +19,11 @@ export interface Label {
     max?: number;
     min?: number;
     size?: number;
+    width?: string;
     error?: string | null;
     flags?: Flags[];
     options?: Options;
-    hidden?: boolean
+    hidden?: boolean,
 }
 
 export enum Flags {

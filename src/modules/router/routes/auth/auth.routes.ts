@@ -16,9 +16,9 @@ const authRoutes: Array<RouteRecordRaw> = [
         path: "/logout",
         name: "logout",
         beforeEnter(to, from, next) {
-            var authService = new AuthService();
+            const authService = AuthService.getInstance();
             authService.logout();
-            next("/auth")
+            next("/auth");
         },
         component: EmptyView,
         meta: {
